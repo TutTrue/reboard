@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build && node ./dist/index.js",
+    "build": "tsc",
+    "studio": "npx prisma studio",
+    "dev": "set TS_NODE_FILES=true && set TS_NODE_TRANSPILE_ONLY=true && nodemon ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "prisma": "^5.8.1"
+  }
+}
