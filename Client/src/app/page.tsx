@@ -1,6 +1,14 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession();
+  let token = null;
+  if (session) {
+    token = cookies().get("next-auth.session-token")?.value;
+  }
+
   return (
     <nav className='bg-white border-gray-200 dark:bg-green-700 h-[10vh]'>
       <div className='max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4'>
@@ -13,12 +21,10 @@ export default function Home() {
           </span>
         </Link>
         <div className='flex items-center space-x-3 rtl:space-x-reverse'>
-          <Link href='/' className="text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200">
+          <Link href='/api/auth/signin' className="text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200">
             Login
           </Link>
-          <Link href='/' className="inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-green-700 hover:bg-green-800 focus:shadow-outline focus:outline-none">
-            Register
-          </Link>
+
         </div>
       </div>
     </nav>

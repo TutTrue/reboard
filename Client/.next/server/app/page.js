@@ -89,6 +89,72 @@ module.exports = require("next/dist/compiled/next-server/app-page.runtime.dev.js
 
 /***/ }),
 
+/***/ "assert":
+/*!*************************!*\
+  !*** external "assert" ***!
+  \*************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("assert");
+
+/***/ }),
+
+/***/ "buffer":
+/*!*************************!*\
+  !*** external "buffer" ***!
+  \*************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("buffer");
+
+/***/ }),
+
+/***/ "crypto":
+/*!*************************!*\
+  !*** external "crypto" ***!
+  \*************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("crypto");
+
+/***/ }),
+
+/***/ "events":
+/*!*************************!*\
+  !*** external "events" ***!
+  \*************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("events");
+
+/***/ }),
+
+/***/ "http":
+/*!***********************!*\
+  !*** external "http" ***!
+  \***********************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("http");
+
+/***/ }),
+
+/***/ "https":
+/*!************************!*\
+  !*** external "https" ***!
+  \************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("https");
+
+/***/ }),
+
 /***/ "path":
 /*!***********************!*\
   !*** external "path" ***!
@@ -100,6 +166,17 @@ module.exports = require("path");
 
 /***/ }),
 
+/***/ "querystring":
+/*!******************************!*\
+  !*** external "querystring" ***!
+  \******************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("querystring");
+
+/***/ }),
+
 /***/ "url":
 /*!**********************!*\
   !*** external "url" ***!
@@ -108,6 +185,28 @@ module.exports = require("path");
 
 "use strict";
 module.exports = require("url");
+
+/***/ }),
+
+/***/ "util":
+/*!***********************!*\
+  !*** external "util" ***!
+  \***********************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("util");
+
+/***/ }),
+
+/***/ "zlib":
+/*!***********************!*\
+  !*** external "zlib" ***!
+  \***********************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("zlib");
 
 /***/ }),
 
@@ -181,7 +280,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Home)\n/* harmony export */ });\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-dev-runtime */ \"(rsc)/./node_modules/next/dist/server/future/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js\");\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ \"(rsc)/./node_modules/next/dist/api/link.js\");\n\n\nfunction Home() {\n    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"nav\", {\n        className: \"bg-white border-gray-200 dark:bg-green-700 h-[10vh]\",\n        children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n            className: \"max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4\",\n            children: [\n                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(next_link__WEBPACK_IMPORTED_MODULE_1__[\"default\"], {\n                    href: \"/\",\n                    className: \"flex items-center space-x-3 rtl:space-x-reverse\",\n                    children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"span\", {\n                        className: \"self-center text-2xl font-semibold whitespace-nowrap dark:text-white\",\n                        children: \"REBOARD\"\n                    }, void 0, false, {\n                        fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                        lineNumber: 11,\n                        columnNumber: 11\n                    }, this)\n                }, void 0, false, {\n                    fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                    lineNumber: 7,\n                    columnNumber: 9\n                }, this),\n                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n                    className: \"flex items-center space-x-3 rtl:space-x-reverse\",\n                    children: [\n                        /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(next_link__WEBPACK_IMPORTED_MODULE_1__[\"default\"], {\n                            href: \"/\",\n                            className: \"text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200\",\n                            children: \"Login\"\n                        }, void 0, false, {\n                            fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                            lineNumber: 16,\n                            columnNumber: 11\n                        }, this),\n                        /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(next_link__WEBPACK_IMPORTED_MODULE_1__[\"default\"], {\n                            href: \"/\",\n                            className: \"inline-flex items-center justify-center h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-green-700 hover:bg-green-800 focus:shadow-outline focus:outline-none\",\n                            children: \"Register\"\n                        }, void 0, false, {\n                            fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                            lineNumber: 19,\n                            columnNumber: 11\n                        }, this)\n                    ]\n                }, void 0, true, {\n                    fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                    lineNumber: 15,\n                    columnNumber: 9\n                }, this)\n            ]\n        }, void 0, true, {\n            fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n            lineNumber: 6,\n            columnNumber: 7\n        }, this)\n    }, void 0, false, {\n        fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n        lineNumber: 5,\n        columnNumber: 5\n    }, this);\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHJzYykvLi9zcmMvYXBwL3BhZ2UudHN4IiwibWFwcGluZ3MiOiI7Ozs7Ozs7O0FBQTZCO0FBRWQsU0FBU0M7SUFDdEIscUJBQ0UsOERBQUNDO1FBQUlDLFdBQVU7a0JBQ2IsNEVBQUNDO1lBQUlELFdBQVU7OzhCQUNiLDhEQUFDSCxpREFBSUE7b0JBQ0hLLE1BQUs7b0JBQ0xGLFdBQVU7OEJBRVYsNEVBQUNHO3dCQUFLSCxXQUFVO2tDQUF1RTs7Ozs7Ozs7Ozs7OEJBSXpGLDhEQUFDQztvQkFBSUQsV0FBVTs7c0NBQ2IsOERBQUNILGlEQUFJQTs0QkFBQ0ssTUFBSzs0QkFBSUYsV0FBVTtzQ0FBNkU7Ozs7OztzQ0FHdEcsOERBQUNILGlEQUFJQTs0QkFBQ0ssTUFBSzs0QkFBSUYsV0FBVTtzQ0FBMk07Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBTzlPIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vcmVib2FyZC8uL3NyYy9hcHAvcGFnZS50c3g/ZjY4YSJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgTGluayBmcm9tIFwibmV4dC9saW5rXCI7XG5cbmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIEhvbWUoKSB7XG4gIHJldHVybiAoXG4gICAgPG5hdiBjbGFzc05hbWU9J2JnLXdoaXRlIGJvcmRlci1ncmF5LTIwMCBkYXJrOmJnLWdyZWVuLTcwMCBoLVsxMHZoXSc+XG4gICAgICA8ZGl2IGNsYXNzTmFtZT0nbWF4LXctc2NyZWVuLXhsIGZsZXggZmxleC13cmFwIGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gbXgtYXV0byBwLTQnPlxuICAgICAgICA8TGlua1xuICAgICAgICAgIGhyZWY9Jy8nXG4gICAgICAgICAgY2xhc3NOYW1lPSdmbGV4IGl0ZW1zLWNlbnRlciBzcGFjZS14LTMgcnRsOnNwYWNlLXgtcmV2ZXJzZSdcbiAgICAgICAgPlxuICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0nc2VsZi1jZW50ZXIgdGV4dC0yeGwgZm9udC1zZW1pYm9sZCB3aGl0ZXNwYWNlLW5vd3JhcCBkYXJrOnRleHQtd2hpdGUnPlxuICAgICAgICAgICAgUkVCT0FSRFxuICAgICAgICAgIDwvc3Bhbj5cbiAgICAgICAgPC9MaW5rPlxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT0nZmxleCBpdGVtcy1jZW50ZXIgc3BhY2UteC0zIHJ0bDpzcGFjZS14LXJldmVyc2UnPlxuICAgICAgICAgIDxMaW5rIGhyZWY9Jy8nIGNsYXNzTmFtZT1cInRleHQtZ3JheS02MDAgZGFyazp0ZXh0LXdoaXRlIGhvdmVyOnRleHQtZ3JheS04MDAgZGFyazpob3Zlcjp0ZXh0LWdyYXktMjAwXCI+XG4gICAgICAgICAgICBMb2dpblxuICAgICAgICAgIDwvTGluaz5cbiAgICAgICAgICA8TGluayBocmVmPScvJyBjbGFzc05hbWU9XCJpbmxpbmUtZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgaC0xMiBweC02IGZvbnQtbWVkaXVtIHRyYWNraW5nLXdpZGUgdGV4dC13aGl0ZSB0cmFuc2l0aW9uIGR1cmF0aW9uLTIwMCByb3VuZGVkIHNoYWRvdy1tZCBiZy1ncmVlbi03MDAgaG92ZXI6YmctZ3JlZW4tODAwIGZvY3VzOnNoYWRvdy1vdXRsaW5lIGZvY3VzOm91dGxpbmUtbm9uZVwiPlxuICAgICAgICAgICAgUmVnaXN0ZXJcbiAgICAgICAgICA8L0xpbms+XG4gICAgICAgIDwvZGl2PlxuICAgICAgPC9kaXY+XG4gICAgPC9uYXY+XG4gICk7XG59XG4iXSwibmFtZXMiOlsiTGluayIsIkhvbWUiLCJuYXYiLCJjbGFzc05hbWUiLCJkaXYiLCJocmVmIiwic3BhbiJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(rsc)/./src/app/page.tsx\n");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ Home)\n/* harmony export */ });\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react/jsx-dev-runtime */ \"(rsc)/./node_modules/next/dist/server/future/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js\");\n/* harmony import */ var react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var next_link__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! next/link */ \"(rsc)/./node_modules/next/dist/api/link.js\");\n/* harmony import */ var next_auth__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! next-auth */ \"(rsc)/./node_modules/next-auth/index.js\");\n/* harmony import */ var next_auth__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(next_auth__WEBPACK_IMPORTED_MODULE_2__);\n/* harmony import */ var next_headers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! next/headers */ \"(rsc)/./node_modules/next/dist/api/headers.js\");\n\n\n\n\nasync function Home() {\n    const session = await (0,next_auth__WEBPACK_IMPORTED_MODULE_2__.getServerSession)();\n    let token = null;\n    if (session) {\n        token = (0,next_headers__WEBPACK_IMPORTED_MODULE_3__.cookies)().get(\"next-auth.session-token\")?.value;\n    }\n    return /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"nav\", {\n        className: \"bg-white border-gray-200 dark:bg-green-700 h-[10vh]\",\n        children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n            className: \"max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4\",\n            children: [\n                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(next_link__WEBPACK_IMPORTED_MODULE_1__[\"default\"], {\n                    href: \"/\",\n                    className: \"flex items-center space-x-3 rtl:space-x-reverse\",\n                    children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"span\", {\n                        className: \"self-center text-2xl font-semibold whitespace-nowrap dark:text-white\",\n                        children: \"REBOARD\"\n                    }, void 0, false, {\n                        fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                        lineNumber: 19,\n                        columnNumber: 11\n                    }, this)\n                }, void 0, false, {\n                    fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                    lineNumber: 15,\n                    columnNumber: 9\n                }, this),\n                /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(\"div\", {\n                    className: \"flex items-center space-x-3 rtl:space-x-reverse\",\n                    children: /*#__PURE__*/ (0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxDEV)(next_link__WEBPACK_IMPORTED_MODULE_1__[\"default\"], {\n                        href: \"/api/auth/signin\",\n                        className: \"text-gray-600 dark:text-white hover:text-gray-800 dark:hover:text-gray-200\",\n                        children: \"Login\"\n                    }, void 0, false, {\n                        fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                        lineNumber: 24,\n                        columnNumber: 11\n                    }, this)\n                }, void 0, false, {\n                    fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n                    lineNumber: 23,\n                    columnNumber: 9\n                }, this)\n            ]\n        }, void 0, true, {\n            fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n            lineNumber: 14,\n            columnNumber: 7\n        }, this)\n    }, void 0, false, {\n        fileName: \"/home/tuttrue/reboard/Client/src/app/page.tsx\",\n        lineNumber: 13,\n        columnNumber: 5\n    }, this);\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHJzYykvLi9zcmMvYXBwL3BhZ2UudHN4IiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQTZCO0FBQ2dCO0FBQ047QUFFeEIsZUFBZUc7SUFDNUIsTUFBTUMsVUFBVSxNQUFNSCwyREFBZ0JBO0lBQ3RDLElBQUlJLFFBQVE7SUFDWixJQUFJRCxTQUFTO1FBQ1hDLFFBQVFILHFEQUFPQSxHQUFHSSxHQUFHLENBQUMsNEJBQTRCQztJQUNwRDtJQUVBLHFCQUNFLDhEQUFDQztRQUFJQyxXQUFVO2tCQUNiLDRFQUFDQztZQUFJRCxXQUFVOzs4QkFDYiw4REFBQ1QsaURBQUlBO29CQUNIVyxNQUFLO29CQUNMRixXQUFVOzhCQUVWLDRFQUFDRzt3QkFBS0gsV0FBVTtrQ0FBdUU7Ozs7Ozs7Ozs7OzhCQUl6Riw4REFBQ0M7b0JBQUlELFdBQVU7OEJBQ2IsNEVBQUNULGlEQUFJQTt3QkFBQ1csTUFBSzt3QkFBbUJGLFdBQVU7a0NBQTZFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBUS9IIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vcmVib2FyZC8uL3NyYy9hcHAvcGFnZS50c3g/ZjY4YSJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgTGluayBmcm9tIFwibmV4dC9saW5rXCI7XG5pbXBvcnQgeyBnZXRTZXJ2ZXJTZXNzaW9uIH0gZnJvbSBcIm5leHQtYXV0aFwiO1xuaW1wb3J0IHsgY29va2llcyB9IGZyb20gXCJuZXh0L2hlYWRlcnNcIjtcblxuZXhwb3J0IGRlZmF1bHQgYXN5bmMgZnVuY3Rpb24gSG9tZSgpIHtcbiAgY29uc3Qgc2Vzc2lvbiA9IGF3YWl0IGdldFNlcnZlclNlc3Npb24oKTtcbiAgbGV0IHRva2VuID0gbnVsbDtcbiAgaWYgKHNlc3Npb24pIHtcbiAgICB0b2tlbiA9IGNvb2tpZXMoKS5nZXQoXCJuZXh0LWF1dGguc2Vzc2lvbi10b2tlblwiKT8udmFsdWU7XG4gIH1cblxuICByZXR1cm4gKFxuICAgIDxuYXYgY2xhc3NOYW1lPSdiZy13aGl0ZSBib3JkZXItZ3JheS0yMDAgZGFyazpiZy1ncmVlbi03MDAgaC1bMTB2aF0nPlxuICAgICAgPGRpdiBjbGFzc05hbWU9J21heC13LXNjcmVlbi14bCBmbGV4IGZsZXgtd3JhcCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIG14LWF1dG8gcC00Jz5cbiAgICAgICAgPExpbmtcbiAgICAgICAgICBocmVmPScvJ1xuICAgICAgICAgIGNsYXNzTmFtZT0nZmxleCBpdGVtcy1jZW50ZXIgc3BhY2UteC0zIHJ0bDpzcGFjZS14LXJldmVyc2UnXG4gICAgICAgID5cbiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9J3NlbGYtY2VudGVyIHRleHQtMnhsIGZvbnQtc2VtaWJvbGQgd2hpdGVzcGFjZS1ub3dyYXAgZGFyazp0ZXh0LXdoaXRlJz5cbiAgICAgICAgICAgIFJFQk9BUkRcbiAgICAgICAgICA8L3NwYW4+XG4gICAgICAgIDwvTGluaz5cbiAgICAgICAgPGRpdiBjbGFzc05hbWU9J2ZsZXggaXRlbXMtY2VudGVyIHNwYWNlLXgtMyBydGw6c3BhY2UteC1yZXZlcnNlJz5cbiAgICAgICAgICA8TGluayBocmVmPScvYXBpL2F1dGgvc2lnbmluJyBjbGFzc05hbWU9XCJ0ZXh0LWdyYXktNjAwIGRhcms6dGV4dC13aGl0ZSBob3Zlcjp0ZXh0LWdyYXktODAwIGRhcms6aG92ZXI6dGV4dC1ncmF5LTIwMFwiPlxuICAgICAgICAgICAgTG9naW5cbiAgICAgICAgICA8L0xpbms+XG5cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICA8L25hdj5cbiAgKTtcbn1cbiJdLCJuYW1lcyI6WyJMaW5rIiwiZ2V0U2VydmVyU2Vzc2lvbiIsImNvb2tpZXMiLCJIb21lIiwic2Vzc2lvbiIsInRva2VuIiwiZ2V0IiwidmFsdWUiLCJuYXYiLCJjbGFzc05hbWUiLCJkaXYiLCJocmVmIiwic3BhbiJdLCJzb3VyY2VSb290IjoiIn0=\n//# sourceURL=webpack-internal:///(rsc)/./src/app/page.tsx\n");
 
 /***/ }),
 
@@ -203,7 +302,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next","vendor-chunks/@swc"], () => (__webpack_exec__("(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fpage&page=%2Fpage&appPaths=%2Fpage&pagePath=private-next-app-dir%2Fpage.tsx&appDir=%2Fhome%2Ftuttrue%2Freboard%2FClient%2Fsrc%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Ftuttrue%2Freboard%2FClient&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!")));
+var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next","vendor-chunks/@swc","vendor-chunks/jose","vendor-chunks/next-auth","vendor-chunks/openid-client","vendor-chunks/@babel","vendor-chunks/uuid","vendor-chunks/oauth","vendor-chunks/@panva","vendor-chunks/yallist","vendor-chunks/preact-render-to-string","vendor-chunks/oidc-token-hash","vendor-chunks/preact","vendor-chunks/cookie"], () => (__webpack_exec__("(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader.js?name=app%2Fpage&page=%2Fpage&appPaths=%2Fpage&pagePath=private-next-app-dir%2Fpage.tsx&appDir=%2Fhome%2Ftuttrue%2Freboard%2FClient%2Fsrc%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Ftuttrue%2Freboard%2FClient&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!")));
 module.exports = __webpack_exports__;
 
 })();
