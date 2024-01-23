@@ -11,5 +11,5 @@ app.route('/api', routes)
 console.log(`Server is running on port ${PORT}`)
 serve({
   fetch: app.fetch,
-  port: PORT
+  port: PORT,
 })

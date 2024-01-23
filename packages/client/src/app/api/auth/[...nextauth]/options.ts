@@ -1,5 +1,5 @@
-import type { NextAuthOptions, User } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import type { NextAuthOptions, User } from 'next-auth'
+import GithubProvider from 'next-auth/providers/github'
 
 export const options: NextAuthOptions = {
   providers: [
@@ -9,7 +9,7 @@ export const options: NextAuthOptions = {
           ...profile,
           id: profile.node_id,
           image: profile.avatar_url,
-        };
+        }
       },
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
@@ -17,24 +17,24 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id;
-      token.rawJwt = token.accessToken;
+      if (user) token.id = user.id
+      token.rawJwt = token.accessToken
 
-      return token;
+      return token
     },
     async session({ session, token }) {
       return {
         ...session,
         accessToken: token.accessToken,
         user: { ...session.user, id: token.id },
-      };
+      }
     },
     async signIn({ user }) {
-      const newUser = user as User & { login: string };
-      const response = await fetch(process.env.SERVER_API_URL + "/user", {
-        method: "POST",
+      const newUser = user as User & { login: string }
+      const response = await fetch(process.env.SERVER_API_URL + '/user', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           id: newUser.id,
@@ -43,8 +43,8 @@ export const options: NextAuthOptions = {
           email: newUser.email,
           profilePictureURL: newUser.image,
         }),
-      });
-      return true;
+      })
+      return true
     },
   },
-};
+}
