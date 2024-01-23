@@ -15,7 +15,7 @@ model User {
   fullName  String
   username  String   @unique
   email     String   @unique
-  profilePirctureURL String
+  profilePictureURL String
   createdAt DateTime @default(now())
 
   UserBoards         UserBoards[]
