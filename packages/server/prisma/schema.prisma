@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  fullName  String
+  username  String   @unique
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  UserBoards         UserBoards[]
+  InvitationFromUser Invitation[] @relation("InvitationFromUser")
+  InvitationToUser   Invitation[] @relation("InvitationToUser")
+  Task               Task[]
+  Action             Action[]
+}
+
+model Board {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  UserBoards UserBoards[]
+  List       List[]
+  Task       Task[]
+}
+
+model Invitation {
+  id         String   @id @default(uuid())
+  fromUserId String
+  toUserId   String
+  accepted   Boolean  @default(false)
+  archived   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  fromUser User @relation("InvitationFromUser", fields: [fromUserId], references: [id])
+  toUser   User @relation("InvitationToUser", fields: [toUserId], references: [id])
+}
+
+model UserBoards {
+  userId  String
+  boardId String
+
+  user  User  @relation(fields: [userId], references: [id])
+  board Board @relation(fields: [boardId], references: [id])
+
+  @@id([userId, boardId])
+}
+
+model List {
+  id        String   @id @default(uuid())
+  name      String
+  boardId   String
+  createdAt DateTime @default(now())
+
+  board Board  @relation(fields: [boardId], references: [id])
+  Task  Task[]
+}
+
+model Task {
+  id        String   @id @default(uuid())
+  text      String
+  label     String?
+  completed Boolean  @default(false)
+  creatorId String
+  listId    String
+  boardId   String
+  createdAt DateTime @default(now())
+
+  creator User  @relation(fields: [creatorId], references: [id])
+  list    List  @relation(fields: [listId], references: [id])
+  board   Board @relation(fields: [boardId], references: [id])
+}
+
+model Action {
+  id            String     @id @default(uuid())
+  type          ActionType
+  takenByUserId String
+  createdAt     DateTime   @default(now())
+
+  user User @relation(fields: [takenByUserId], references: [id])
+}
+
+enum ActionType {
+  CREATE_TASK
+  CREATE_LIST
+  UPDATE_TASK
+  UPDATE_LIST
+  DELETE_LIST
+  DELETE_TASK
+  COMPLETE_TASK
+  INVITE_USER
+  ACCEPT_INVITATION // join a board
+}
