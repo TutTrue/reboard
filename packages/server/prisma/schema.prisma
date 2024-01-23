@@ -15,6 +15,7 @@ model User {
   fullName  String
   username  String   @unique
   email     String   @unique
+  profilePirctureURL String
   createdAt DateTime @default(now())
 
   UserBoards         UserBoards[]
@@ -99,5 +100,5 @@ enum ActionType {
   DELETE_TASK
   COMPLETE_TASK
   INVITE_USER
-  ACCEPT_INVITATION // join a board
+  ACCEPT_INVITATION
 }
