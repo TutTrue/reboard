@@ -4,7 +4,7 @@ import { Hono } from 'hono'
 import { app as routes } from './routes'
 
 const app = new Hono()
-const PORT = (process.env.PORT || 3000) as number
+const PORT = (process.env.PORT || 3001) as number
 
 app.route('/api', routes)
 
