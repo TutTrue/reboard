@@ -17,7 +17,10 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) token.id = user.id
+      if (user) {
+        token.id = user.id
+        token.username = user.login
+      }
       token.rawJwt = token.accessToken
 
       return token
@@ -26,22 +29,21 @@ export const options: NextAuthOptions = {
       return {
         ...session,
         accessToken: token.accessToken,
-        user: { ...session.user, id: token.id },
+        user: { ...session.user, id: token.id, username: token.username },
       }
     },
     async signIn({ user }) {
-      const newUser = user as User & { login: string }
       const response = await fetch(process.env.SERVER_API_URL + '/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: newUser.id,
-          fullName: newUser.name,
-          username: newUser.login,
-          email: newUser.email,
-          profilePictureURL: newUser.image,
+          id: user.id,
+          fullName: user.name,
+          username: user.login,
+          email: user.email,
+          profilePictureURL: user.image,
         }),
       })
       return true
