@@ -31,7 +31,7 @@ export const options: NextAuthOptions = {
     },
     async signIn({ user }) {
       const newUser = user as User & { login: string }
-      const response = await fetch(process.env.SERVER_API_URL + '/user', {
+      const response = await fetch(process.env.SERVER_API_URL + '/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
