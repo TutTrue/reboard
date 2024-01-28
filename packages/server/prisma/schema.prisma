@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  fullName  String
-  username  String   @unique
-  email     String   @unique
+  id                String   @id @unique
+  fullName          String
+  username          String   @unique
+  email             String   @unique
   profilePictureURL String
-  createdAt DateTime @default(now())
+  createdAt         DateTime @default(now())
 
   UserBoards         UserBoards[]
   InvitationFromUser Invitation[] @relation("InvitationFromUser")
