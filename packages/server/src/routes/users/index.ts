@@ -2,7 +2,6 @@ import { Hono } from 'hono'
 import { prisma } from '../../db/index'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-
 export const user = new Hono()
 
 user.post(
