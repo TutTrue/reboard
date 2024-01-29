@@ -23,6 +23,7 @@
     "@hono/zod-validator": "^0.1.11",
     "@prisma/client": "^5.8.1",
     "hono": "^3.12.6",
+    "next-auth": "^4.24.5",
     "prisma": "^5.8.1",
     "zod": "^3.22.4"
   }
