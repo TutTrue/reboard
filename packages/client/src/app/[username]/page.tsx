@@ -1,7 +1,5 @@
 import Link from 'next/link'
 import { getBoards } from '@/app/lib/board'
-import { useSnapshot } from 'valtio'
-import { state } from '@/state'
 
 export default async function dashBoard({
   params,
@@ -10,8 +8,6 @@ export default async function dashBoard({
 }) {
   const username = params.username
   const boards = await getBoards(username)
-
-  const { user } = useSnapshot(state)
 
   return (
     <>

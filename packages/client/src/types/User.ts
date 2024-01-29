@@ -1,12 +1,9 @@
 import { DefaultSession, DefaultUser } from 'next-auth'
+import type { IUser } from './'
 
 declare module 'next-auth' {
-  interface User extends DefaultUser {
-    id: string
+  interface User extends DefaultUser, IUser {
     login: string
-    fullName: string
-    email: string
-    profilePictureURL: string
   }
 }
 
