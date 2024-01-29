@@ -40,7 +40,7 @@ export const options: NextAuthOptions = {
         },
         body: JSON.stringify({
           id: user.id,
-          fullName: user.name,
+          fullName: user.name || user.login,
           username: user.login,
           email: user.email,
           profilePictureURL: user.image,
