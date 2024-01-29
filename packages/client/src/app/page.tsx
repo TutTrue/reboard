@@ -1,15 +1,24 @@
+import Main from '@/components/Main'
 import NavBar from '@/components/NavBar'
 import { getServerSession } from 'next-auth'
-import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { options } from './api/auth/[...nextauth]/options'
 
 export default async function Home() {
-  const session = await getServerSession()
-  let token = null
-  if (session) {
-    token = cookies().get('next-auth.session-token')?.value
-  }
+  const session = await getServerSession(options)
 
   return (
-      <NavBar />
+    <>
+      {
+        session ? (
+          redirect(`/${session?.user?.username}`)
+        ) : (
+          <>
+            <NavBar />
+            <Main />
+          </>
+        )
+      }
+    </>
   )
 }
