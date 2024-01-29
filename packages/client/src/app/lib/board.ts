@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { Board } from '../../types/board'
+import { Board } from '@/types/board'
 import { unstable_noStore as noStore } from 'next/cache'
 import { redirect } from 'next/navigation'
 

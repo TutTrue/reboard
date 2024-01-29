@@ -1,6 +1,6 @@
 import NavBar from "@/components/NavBar"
 import Link from "next/link"
-import { getBoards } from "../lib/board"
+import { getBoards } from "@/app/lib/board"
 
 export default async function dashBoard({ params }: { params: { username: string } }) {
   const username = params.username
