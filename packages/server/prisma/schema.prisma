@@ -18,7 +18,7 @@ model User {
   profilePictureURL String
   createdAt         DateTime @default(now())
 
-  UserBoards         UserBoards[]
+  UserBoards         Board[]
   InvitationFromUser Invitation[] @relation("InvitationFromUser")
   InvitationToUser   Invitation[] @relation("InvitationToUser")
   Task               Task[]
@@ -30,9 +30,8 @@ model Board {
   name      String
   createdAt DateTime @default(now())
 
-  UserBoards UserBoards[]
+  UserBoards User[]
   List       List[]
-  Task       Task[]
 }
 
 model Invitation {
@@ -45,16 +44,6 @@ model Invitation {
 
   fromUser User @relation("InvitationFromUser", fields: [fromUserId], references: [id])
   toUser   User @relation("InvitationToUser", fields: [toUserId], references: [id])
-}
-
-model UserBoards {
-  userId  String
-  boardId String
-
-  user  User  @relation(fields: [userId], references: [id])
-  board Board @relation(fields: [boardId], references: [id])
-
-  @@id([userId, boardId])
 }
 
 model List {
@@ -74,12 +63,10 @@ model Task {
   completed Boolean  @default(false)
   creatorId String
   listId    String
-  boardId   String
   createdAt DateTime @default(now())
 
-  creator User  @relation(fields: [creatorId], references: [id])
-  list    List  @relation(fields: [listId], references: [id])
-  board   Board @relation(fields: [boardId], references: [id])
+  creator User @relation(fields: [creatorId], references: [id])
+  list    List @relation(fields: [listId], references: [id])
 }
 
 model Action {
