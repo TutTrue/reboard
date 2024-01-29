@@ -32,6 +32,7 @@ model Board {
 
   UserBoards User[]
   List       List[]
+  Task       Task[]
 }
 
 model Invitation {
@@ -62,11 +63,13 @@ model Task {
   label     String?
   completed Boolean  @default(false)
   creatorId String
+  boardId   String
   listId    String
   createdAt DateTime @default(now())
 
-  creator User @relation(fields: [creatorId], references: [id])
-  list    List @relation(fields: [listId], references: [id])
+  creator User  @relation(fields: [creatorId], references: [id])
+  list    List  @relation(fields: [listId], references: [id])
+  board   Board @relation(fields: [boardId], references: [id])
 }
 
 model Action {
