@@ -1,5 +1,4 @@
 import Main from '@/components/Main'
-import NavBar from '@/components/NavBar'
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { options } from '@/app/api/auth/[...nextauth]/options'
@@ -9,16 +8,13 @@ export default async function Home() {
 
   return (
     <>
-      {
-        session ? (
-          redirect(`/${session?.user?.username}`)
-        ) : (
-          <>
-            <NavBar />
-            <Main />
-          </>
-        )
-      }
+      {session ? (
+        redirect(`/${session?.user?.username}`)
+      ) : (
+        <>
+          <Main />
+        </>
+      )}
     </>
   )
 }
