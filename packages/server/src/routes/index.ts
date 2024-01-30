@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import { user as usersRoutes } from './users'
-import { board } from './boards'
+import { app as usersRoutes } from './users'
+import { app as boardRouter } from './boards'
 
 export const app = new Hono()
 
 app.route('/users', usersRoutes)
-app.route('/boards', board)
+app.route('/boards', boardRouter)

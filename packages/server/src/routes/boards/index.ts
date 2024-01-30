@@ -2,29 +2,27 @@ import { Hono } from 'hono'
 import { prisma } from '../../db/index'
 import { decode } from 'next-auth/jwt'
 
-export const board = new Hono()
+export const app = new Hono()
 
-board.use('/*', async (c, next) => {
+app.use('/*', async (c, next) => {
   const token = c.req.header('authorization') as string
   const user = await decode({ token, secret: process.env.JWT_SECRET || '' })
   if (user) {
     c.set('jwtPayload', user)
     return next()
   }
-  c.status(401)
-  return c.json({ message: 'Unauthorized' })
+  return c.json({ message: 'Unauthorized' }, 401)
 })
 
-board.get('/:username', async (c) => {
+app.get('/:username', async (c) => {
   try {
     const jwtPayload = c.get('jwtPayload')
     const username = c.req.param('username')
     if (jwtPayload.username !== username) {
-      c.status(401)
-      return c.json({
-        message: 'Unauthorized',
-        redirect: `/${jwtPayload.username}`,
-      })
+      return c.json(
+        { message: 'Unauthorized', redirect: `/${jwtPayload.username}` },
+        401
+      )
     }
     const userBoards = await prisma.user.findUnique({
       select: {
@@ -34,12 +32,8 @@ board.get('/:username', async (c) => {
         username,
       },
     })
-    c.status(200)
-    return c.json(userBoards?.UserBoards)
+    return c.json(userBoards?.UserBoards, 200)
   } catch (e) {
-    c.status(500)
-    return c.json({
-      message: 'Internal server error',
-    })
+    return c.json({ message: 'Internal server error' }, 500)
   }
 })
