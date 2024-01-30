@@ -6,7 +6,25 @@ export interface IUser {
   profilePictureURL: string
 }
 
-export interface Board {
+export interface ITask {
+  id: string
+  text: string
+  label: string
+  completed: boolean
+  creatorId: string
+  boardId: string
+  listId: string
+  createdAt: Date
+}
+
+export interface IList {
+  id: string
+  name: string
+  boardId: string
+  createdAt: Date
+}
+
+export interface IBoard {
   id: string
   name: string
   createdAt: Date
