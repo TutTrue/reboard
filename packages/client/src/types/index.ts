@@ -5,3 +5,9 @@ export interface IUser {
   email: string
   profilePictureURL: string
 }
+
+export interface Board {
+  id: string
+  name: string
+  createdAt: Date
+}

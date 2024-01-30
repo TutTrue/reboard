@@ -19,7 +19,7 @@ export async function authMiddleware(c: Context, next: Next) {
   })) as AuthVariables['decodedJwtPayload']
 
   if (user) {
-    c.set('jwtPayload', user)
+    c.set('decodedJwtPayload', user)
     return next()
   }
 

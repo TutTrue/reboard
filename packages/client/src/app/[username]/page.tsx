@@ -7,11 +7,12 @@ export default async function dashBoard({
   params: { username: string }
 }) {
   const username = params.username
-  const boards = await getBoards(username)
+  const boards = await getBoards()
 
   return (
     <>
       <div className="flex gap-5 my-5">
+        <pre>{JSON.stringify(boards, null, 4)}</pre>
         {boards?.map((board) => (
           <Link
             key={board.id}
