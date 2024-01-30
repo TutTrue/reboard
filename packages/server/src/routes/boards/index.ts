@@ -12,7 +12,13 @@ app.get('/', async (c) => {
 
     const userBoards = await prisma.user.findUnique({
       select: {
-        UserBoards: true,
+        UserBoards: {
+          include: {
+            Task: true,
+            List: true,
+            UserBoards: true
+          }
+        },
       },
       where: {
         username: decodedJwtPayload?.username,

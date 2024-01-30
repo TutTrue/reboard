@@ -1,28 +1,29 @@
-import Link from 'next/link'
+import { getServerSession } from 'next-auth'
 import { getBoards } from '@/app/lib/board'
+import Container from '@/components/Container'
+import BoardCard from '@/components/BoardCard'
+
+import { options } from '@/app/api/auth/[...nextauth]/options'
 
 export default async function dashBoard({
   params,
 }: {
   params: { username: string }
 }) {
-  const username = params.username
+  const session = await getServerSession(options)
   const boards = await getBoards()
 
   return (
-    <>
-      <div className="flex gap-5 my-5">
-        <pre>{JSON.stringify(boards, null, 4)}</pre>
+    <Container>
+      <h2 className="font-bold text-4xl my-10">
+        Welcome back, {session?.user.name}!
+      </h2>
+
+      <div className="grid grid-cols-3 gap-5">
         {boards?.map((board) => (
-          <Link
-            key={board.id}
-            className="bg-green-700 p-8"
-            href={`/${username}/${board.id}`}
-          >
-            <h1>{board.name}</h1>
-          </Link>
+          <BoardCard key={board.id} board={board} session={session} />
         ))}
       </div>
-    </>
+    </Container>
   )
 }

@@ -29,11 +29,17 @@ export const options: NextAuthOptions = {
       return {
         ...session,
         accessToken: token.accessToken,
-        user: { ...session.user, id: token.id, username: token.username },
+        user: {
+          id: token.id,
+          name: token.name,
+          username: token.username,
+          email: token.email,
+          profilePictureURL: token.picture,
+        },
       }
     },
     async signIn({ user }) {
-      const response = await fetch(process.env.SERVER_API_URL + '/users', {
+      await fetch(process.env.SERVER_API_URL + '/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

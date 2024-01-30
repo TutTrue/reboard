@@ -1,9 +1,11 @@
-import { Board } from '@/types'
+import { IBoard, IList, ITask, IUser } from '@/types'
 import { unstable_noStore as noStore } from 'next/cache'
 import { cookies } from 'next/headers'
 import { fetcher } from '.'
 
-export async function getBoards(): Promise<Board[] | null> {
+export async function getBoards(): Promise<
+  (IBoard & { Task: ITask[]; List: IList[]; UserBoards: IUser[] })[] | null
+> {
   noStore()
 
   const res = await fetcher.get(`/boards`, {
