@@ -21,7 +21,7 @@ app.get('/', async (c) => {
             Task: true,
             List: true,
             UserBoards: true,
-            Owner: true
+            Owner: true,
           },
         },
       },
@@ -56,7 +56,7 @@ app.get('/:username/:boardName', async (c) => {
     include: {
       List: true,
       Task: true,
-      Owner: true
+      Owner: true,
     },
   })
 
@@ -152,3 +152,56 @@ app.delete('/:boardId', async (c) => {
     return c.json('internal server error', 500)
   }
 })
+
+app.patch(
+  '/:username/:boardName',
+  zValidator(
+    'json',
+    z.object({
+      username: z.string().min(1).max(255),
+      name: z
+        .string()
+        .min(2)
+        .max(255)
+        .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
+          message: "Invalid board name, name can't contain spaces",
+        }),
+    })
+  ),
+  async (c) => {
+    try {
+      const decodedJwtPayload = c.get('decodedJwtPayload')
+      const { username: ownerName , boardName } = c.req.param()
+      const { username, name } = c.req.valid('json')
+
+      const board = await prisma.board.findFirst({
+        where: {
+          name: boardName,
+          ownerId: decodedJwtPayload?.id,
+        },
+      })
+
+      if (!board) return c.json({ message: 'Board can not be found' }, 404)
+
+      const updatedBoard = await prisma.board.update({
+        // @ts-ignore
+        where: {
+          name: boardName,
+          ownerId: decodedJwtPayload?.id,
+        },
+        data: {
+          name: name ? name : boardName,
+          Owner: {
+            update: {
+              username: username ? username : decodedJwtPayload?.username,
+            },
+          },
+        },
+      })
+
+      return c.json(updatedBoard, 200)
+    } catch (e) {
+      return c.json('internal server error', 500)
+    }
+  }
+)
