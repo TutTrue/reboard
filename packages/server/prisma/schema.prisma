@@ -56,7 +56,7 @@ model List {
   boardId   String
   createdAt DateTime @default(now())
 
-  board Board  @relation(fields: [boardId], references: [id])
+  board Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   Task  Task[]
 }
 
@@ -71,8 +71,8 @@ model Task {
   createdAt DateTime @default(now())
 
   creator User  @relation(fields: [creatorId], references: [id])
-  list    List  @relation(fields: [listId], references: [id])
-  board   Board @relation(fields: [boardId], references: [id])
+  list    List  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 }
 
 model Action {
