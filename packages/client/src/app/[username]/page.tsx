@@ -4,14 +4,20 @@ import Container from '@/components/Container'
 import BoardCard from '@/components/BoardCard'
 
 import { options } from '@/app/api/auth/[...nextauth]/options'
+import { redirect } from 'next/navigation'
 
 export default async function dashBoard({
   params,
 }: {
   params: { username: string }
 }) {
+  const { username } = params
   const session = await getServerSession(options)
   const boards = await getBoards()
+
+  if (username !== session?.user.username) redirect(`https://github.com/${username}`)
+
+  console.log(session?.user)
 
   return (
     <Container>

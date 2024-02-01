@@ -5,3 +5,15 @@
 body {
   @apply bg-gray-100
 }
+
+.inline-avatar {
+  @apply relative overflow-hidden w-[27px] h-[27px]
+}
+
+.inline-avatar:not(:last-child) {
+  @apply ml-[-18px]
+}
+
+.inline-avatar img {
+  @apply w-full block
+}

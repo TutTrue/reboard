@@ -26,12 +26,13 @@ export const options: NextAuthOptions = {
       return token
     },
     async session({ session, token }) {
+
       return {
         ...session,
         accessToken: token.accessToken,
         user: {
           id: token.id,
-          name: token.name,
+          name: (token.name || token.username) as string,
           username: token.username,
           email: token.email,
           profilePictureURL: token.picture,
