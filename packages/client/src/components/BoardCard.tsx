@@ -7,32 +7,34 @@ import {
   HiOutlinePencil,
   HiOutlineTrash,
 } from 'react-icons/hi2'
-import { IBoard, IList, ITask, IUser } from '@/types'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { BoardWithRelations } from '@/types/index'
 
 export default function BoardCard({
   board,
   session,
 }: {
-  board: IBoard & { Task: ITask[]; List: IList[]; UserBoards: IUser[] }
+  board: BoardWithRelations
   session: Session | null
 }) {
   return (
     <div className="border shadow p-5 rounded-2xl bg-white">
       <header className="flex items-center justify-between">
+        
         <Link
-          href={`/${session?.user.username}/${board.id}`}
-          className="font-semibold text-2xl flex items-center gap-2"
+          href={`/${board?.Owner.username}/${board.name}`}
+          className="font-semibold text-xl flex items-center gap-1"
         >
-          <HiOutlinePaperClip size={27} />
-          <span>{board.name}</span>
+          <HiOutlinePaperClip size={17} />
+          <span>{board.Owner.username != session?.user.username  ? (board.Owner.username + '/') : ''}{board.name}</span>
         </Link>
-        <div className="text-gray-500">
+
+        <div className="text-gray-500 flex-shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger>
               <HiOutlineEllipsisHorizontal size={27} />
@@ -58,9 +60,17 @@ export default function BoardCard({
       <hr className="my-5" />
 
       <div className="">
-        <div className='items-center gap-2 inline-flex flex-row-reverse'>
+        <div className="items-center gap-2 inline-flex flex-row-reverse">
           {board.UserBoards.map((user) => (
-            <Link key={user.id} href={user.username !== session?.user.username ? `https://github.com/${user.username}` : '#'} className='inline-avatar'>
+            <Link
+              key={user.id}
+              href={
+                user.username !== session?.user.username
+                  ? `https://github.com/${user.username}`
+                  : '#'
+              }
+              className="inline-avatar"
+            >
               <Image
                 src={user?.profilePictureURL || '/images/default-user.png'}
                 alt="user image"

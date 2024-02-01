@@ -3,6 +3,8 @@ import { prisma } from '../../db/index'
 import { type AuthVariables, authMiddleware } from '../../middleware'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { ERROR_CODES } from '../../constants'
+import { createErrors } from '../../utils'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -19,6 +21,7 @@ app.get('/', async (c) => {
             Task: true,
             List: true,
             UserBoards: true,
+            Owner: true
           },
         },
       },
@@ -53,6 +56,7 @@ app.get('/:username/:boardName', async (c) => {
     include: {
       List: true,
       Task: true,
+      Owner: true
     },
   })
 
@@ -68,9 +72,11 @@ app.post(
     z.object({
       name: z
         .string()
-        .min(1)
+        .min(2)
         .max(255)
-        .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i),
+        .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
+          message: "Invalid board name, name can't contain spaces",
+        }),
     })
   ),
   async (c) => {
@@ -92,7 +98,13 @@ app.post(
       // make sure a user can't have two boards with the same name/slug
       if (boardWithSameName)
         return c.json(
-          { message: 'A board with the same name already exists' },
+          createErrors([
+            {
+              code: ERROR_CODES.DUBLICATE_ENTRY,
+              message: 'A board with the same name already exists',
+              path: 'name',
+            },
+          ]),
           401
         )
 
@@ -110,7 +122,7 @@ app.post(
 
       return c.json(newBoard)
     } catch (e) {
-      return c.json({ message: 'Internal server error' }, 500)
+      return c.json('internal server error', 500)
     }
   }
 )

@@ -29,3 +29,10 @@ export interface IBoard {
   name: string
   createdAt: Date
 }
+
+export type BoardWithRelations = IBoard & {
+  Task: ITask[]
+  List: IList[]
+  UserBoards: IUser[]
+  Owner: IUser
+}

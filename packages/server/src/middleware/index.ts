@@ -1,4 +1,5 @@
 import { Context, Next } from 'hono'
+import { getCookie } from 'hono/cookie'
 import { decode } from 'next-auth/jwt'
 
 export type AuthVariables = {
@@ -12,7 +13,11 @@ export type AuthVariables = {
 }
 
 export async function authMiddleware(c: Context, next: Next) {
-  const token = c.req.header('authorization') as string
+  const token =
+    getCookie(c, 'next-auth.session-token') ||
+    c.req.header('authorization') ||
+    ''
+
   const user = (await decode({
     token,
     secret: process.env.JWT_SECRET || '',
