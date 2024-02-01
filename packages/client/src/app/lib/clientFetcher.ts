@@ -13,4 +13,13 @@ export const clientAPIActions = {
 
     return res.data
   },
+  async deleteBoardFetcher(id: string): Promise<BoardWithRelations | null> {
+    console.log('delete board', id);
+    
+    const res = await fetcher.delete(`/boards/${id}`)
+
+    if (res.status === 500 || res.status === 404) return null
+
+    return res.data
+  }
 }
