@@ -126,3 +126,29 @@ app.post(
     }
   }
 )
+
+app.delete('/:boardId', async (c) => {
+  try {
+    const decodedJwtPayload = c.get('decodedJwtPayload')
+    const boardId = c.req.param('boardId')
+
+    const board = await prisma.board.findFirst({
+      where: {
+        id: boardId,
+        ownerId: decodedJwtPayload?.id,
+      },
+    })
+
+    if (!board) return c.json({ message: 'Board can not be found' }, 404)
+
+    const deletedBoard = await prisma.board.delete({
+      where: {
+        id: boardId,
+      },
+    })
+
+    return c.json({}, 200)
+  } catch (e) {
+    return c.json('internal server error', 500)
+  }
+})
