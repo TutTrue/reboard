@@ -7,19 +7,19 @@ import {
   HiOutlinePencil,
   HiOutlineTrash,
 } from 'react-icons/hi2'
-import { IBoard, IList, ITask, IUser } from '@/types'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { BoardWithRelations } from '@/app/lib/board'
 
 export default function BoardCard({
   board,
   session,
 }: {
-  board: IBoard & { Task: ITask[]; List: IList[]; UserBoards: IUser[] }
+  board: BoardWithRelations
   session: Session | null
 }) {
   return (
@@ -58,9 +58,17 @@ export default function BoardCard({
       <hr className="my-5" />
 
       <div className="">
-        <div className='items-center gap-2 inline-flex flex-row-reverse'>
+        <div className="items-center gap-2 inline-flex flex-row-reverse">
           {board.UserBoards.map((user) => (
-            <Link key={user.id} href={user.username !== session?.user.username ? `https://github.com/${user.username}` : '#'} className='inline-avatar'>
+            <Link
+              key={user.id}
+              href={
+                user.username !== session?.user.username
+                  ? `https://github.com/${user.username}`
+                  : '#'
+              }
+              className="inline-avatar"
+            >
               <Image
                 src={user?.profilePictureURL || '/images/default-user.png'}
                 alt="user image"
