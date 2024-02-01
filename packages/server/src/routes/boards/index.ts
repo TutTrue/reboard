@@ -35,14 +35,18 @@ app.get('/', async (c) => {
 
 app.get('/:username/:boardName', async (c) => {
   const { username, boardName } = c.req.param()
+  const decodedJwtPayload = c.get('decodedJwtPayload')
 
   // check if user have access to the board or board exist
   const board = await prisma.board.findFirst({
     where: {
       name: boardName,
+      Owner: {
+        username,
+      },
       UserBoards: {
         some: {
-          username,
+          id: decodedJwtPayload?.id,
         },
       },
     },
@@ -95,6 +99,7 @@ app.post(
       const newBoard = await prisma.board.create({
         data: {
           name,
+          ownerId: decodedJwtPayload?.id!,
           UserBoards: {
             connect: {
               id: decodedJwtPayload?.id,
