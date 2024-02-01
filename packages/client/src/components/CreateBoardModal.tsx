@@ -24,7 +24,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-
+import { useState } from 'react'
+import { clientAPIActions } from '@/app/lib/clientFetcher'
 
 const formSchema = z.object({
   name: z
@@ -32,16 +33,26 @@ const formSchema = z.object({
     .min(2, {
       message: 'name must be at least 2 characters.',
     })
-    .max(120, { message: 'name must be at most 120 characters.' }),
+    .max(120, { message: 'name must be at most 120 characters.' })
+    .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
+      message: "Invalid board name, name can't contain spaces",
+    }),
 })
 
-function CreateBoardForm() {
+
+function CreateBoardForm({ closeModal }: { closeModal: Function }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // call the server
+    // TODO hanle dublicate board names + invalid
+    const res = await clientAPIActions.createBoardFetcher(values.name)
+    if (!res) {
+      console.log(res)
+      return
+    }
+    closeModal()
   }
 
   return (
@@ -73,8 +84,10 @@ function CreateBoardForm() {
 }
 
 export function CreateBoardModal() {
+  const [isModalActive, setIsModalActive] = useState(false)
+
   return (
-    <Dialog>
+    <Dialog open={isModalActive} onOpenChange={setIsModalActive}>
       <DialogTrigger asChild>
         <button className="bg-indigo-500 text-white rounded-full p-2">
           <HiOutlinePlus size={20} />
@@ -87,7 +100,7 @@ export function CreateBoardModal() {
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <CreateBoardForm />
+          <CreateBoardForm closeModal={() => setIsModalActive(false)} />
         </DialogDescription>
       </DialogContent>
     </Dialog>

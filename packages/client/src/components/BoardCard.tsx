@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { BoardWithRelations } from '@/app/lib/board'
+import { BoardWithRelations } from '@/types/index'
 
 export default function BoardCard({
   board,
@@ -25,14 +25,16 @@ export default function BoardCard({
   return (
     <div className="border shadow p-5 rounded-2xl bg-white">
       <header className="flex items-center justify-between">
+        
         <Link
-          href={`/${session?.user.username}/${board.id}`}
-          className="font-semibold text-2xl flex items-center gap-2"
+          href={`/${board?.Owner.username}/${board.name}`}
+          className="font-semibold text-xl flex items-center gap-1"
         >
-          <HiOutlinePaperClip size={27} />
-          <span>{board.name}</span>
+          <HiOutlinePaperClip size={17} />
+          <span>{board.Owner.username != session?.user.username  ? (board.Owner.username + '/') : ''}{board.name}</span>
         </Link>
-        <div className="text-gray-500">
+
+        <div className="text-gray-500 flex-shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger>
               <HiOutlineEllipsisHorizontal size={27} />

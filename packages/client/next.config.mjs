@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/proxy/:path*',
+        destination: 'http://localhost:3001/:path*', // Proxy to Backend
+      },
+    ]
+  },
   images: {
     remotePatterns: [
       {
