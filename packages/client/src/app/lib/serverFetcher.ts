@@ -21,4 +21,20 @@ export const serverAPIActions = {
 
     return res.data
   },
+  async getBoard(
+    username: string,
+    boardName: string
+  ): Promise<BoardWithRelations | null> {
+    noStore()
+
+    const res = await fetcher.get(`/boards/${username}/${boardName}`, {
+      headers: {
+        authorization: cookies().get('next-auth.session-token')?.value || '',
+      },
+    })
+
+    if (res.status === 500 || res.status === 401) return null
+
+    return res.data
+  },
 }
