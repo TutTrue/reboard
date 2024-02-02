@@ -21,7 +21,7 @@ app.get('/', async (c) => {
             Task: true,
             List: true,
             UserBoards: true,
-            Owner: true
+            Owner: true,
           },
         },
       },
@@ -56,7 +56,7 @@ app.get('/:username/:boardName', async (c) => {
     include: {
       List: true,
       Task: true,
-      Owner: true
+      Owner: true,
     },
   })
 
@@ -141,7 +141,7 @@ app.delete('/:boardId', async (c) => {
 
     if (!board) return c.json({ message: 'Board can not be found' }, 404)
 
-    const deletedBoard = await prisma.board.delete({
+    await prisma.board.delete({
       where: {
         id: boardId,
       },
