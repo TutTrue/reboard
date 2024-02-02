@@ -171,31 +171,79 @@ app.patch(
   async (c) => {
     try {
       const decodedJwtPayload = c.get('decodedJwtPayload')
-      const { username: ownerName , boardName } = c.req.param()
+      const { username: ownerName, boardName } = c.req.param()
       const { username, name } = c.req.valid('json')
 
+      if (decodedJwtPayload?.username !== ownerName)
+        return c.json({ message: 'Unauthorized' }, 401)
+
       const board = await prisma.board.findFirst({
+        include: {
+          UserBoards: {
+            select: {
+              username: true,
+            },
+          },
+        },
         where: {
           name: boardName,
-          ownerId: decodedJwtPayload?.id,
+          Owner: {
+            username: ownerName,
+          },
         },
       })
 
-      if (!board) return c.json({ message: 'Board can not be found' }, 404)
+      if (!board)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.BOARD_NOT_FOND,
+              message: `no boards found with this name ${boardName} for the user ${ownerName}`,
+              path: ['board name', 'username'],
+            },
+          ]),
+          404
+        )
+      if (!board.UserBoards.some((board) => board.username === username))
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+              message: `${username} is not a user in ${boardName} board`,
+              path: 'username',
+            },
+          ]),
+          404
+        )
+
+      const newOwner = await prisma.user.findFirst({
+        where: {
+          username,
+        },
+      })
+
+      if (!newOwner)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.USER_NOT_FOUND,
+              message: `${name} cant be found`,
+              path: 'username',
+            },
+          ]),
+          404
+        )
 
       const updatedBoard = await prisma.board.update({
-        // @ts-ignore
         where: {
-          name: boardName,
-          ownerId: decodedJwtPayload?.id,
+          name_ownerId: {
+            name: boardName,
+            ownerId: decodedJwtPayload?.id!,
+          },
         },
         data: {
           name: name ? name : boardName,
-          Owner: {
-            update: {
-              username: username ? username : decodedJwtPayload?.username,
-            },
-          },
+          ownerId: newOwner.id,
         },
       })
 
