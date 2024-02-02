@@ -36,6 +36,8 @@ model Board {
   UserBoards User[]
   List       List[]
   Task       Task[]
+
+  @@unique([name, ownerId])
 }
 
 model Invitation {
