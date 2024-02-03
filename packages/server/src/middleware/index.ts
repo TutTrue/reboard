@@ -1,6 +1,7 @@
 import { Context, Next } from 'hono'
 import { getCookie } from 'hono/cookie'
 import { decode } from 'next-auth/jwt'
+import { AUTH_HEADER_NAME, TOKEN_COOKIE_NAME } from '../constants'
 
 export type AuthVariables = {
   decodedJwtPayload?: {
@@ -14,9 +15,7 @@ export type AuthVariables = {
 
 export async function authMiddleware(c: Context, next: Next) {
   const token =
-    getCookie(c, 'next-auth.session-token') ||
-    c.req.header('authorization') ||
-    ''
+    getCookie(c, TOKEN_COOKIE_NAME) || c.req.header(AUTH_HEADER_NAME) || ''
 
   const user = (await decode({
     token,
