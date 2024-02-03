@@ -32,22 +32,25 @@ model Board {
   ownerId   String
   createdAt DateTime @default(now())
 
-  Owner      User   @relation("Owner", fields: [ownerId], references: [id])
+  Owner      User         @relation("Owner", fields: [ownerId], references: [id])
   UserBoards User[]
   List       List[]
   Task       Task[]
+  Invitation Invitation[]
 }
 
 model Invitation {
   id         String   @id @default(uuid())
+  boardId    String
   fromUserId String
   toUserId   String
   accepted   Boolean  @default(false)
   archived   Boolean  @default(false)
   createdAt  DateTime @default(now())
 
-  fromUser User @relation("InvitationFromUser", fields: [fromUserId], references: [id])
-  toUser   User @relation("InvitationToUser", fields: [toUserId], references: [id])
+  FromUser User  @relation("InvitationFromUser", fields: [fromUserId], references: [id])
+  ToUser   User  @relation("InvitationToUser", fields: [toUserId], references: [id])
+  Board    Board @relation(fields: [boardId], references: [id])
 }
 
 model List {
@@ -56,7 +59,7 @@ model List {
   boardId   String
   createdAt DateTime @default(now())
 
-  board Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  Board Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
   Task  Task[]
 }
 
@@ -70,9 +73,9 @@ model Task {
   listId    String
   createdAt DateTime @default(now())
 
-  creator User  @relation(fields: [creatorId], references: [id])
-  list    List  @relation(fields: [listId], references: [id], onDelete: Cascade)
-  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  Creator User  @relation(fields: [creatorId], references: [id])
+  List    List  @relation(fields: [listId], references: [id], onDelete: Cascade)
+  Board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 }
 
 model Action {
@@ -81,7 +84,7 @@ model Action {
   takenByUserId String
   createdAt     DateTime   @default(now())
 
-  user User @relation(fields: [takenByUserId], references: [id])
+  User User @relation(fields: [takenByUserId], references: [id])
 }
 
 enum ActionType {
