@@ -25,7 +25,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
-import { clientAPIActions } from '@/app/lib/clientFetcher'
+import { createBoardAction } from '@/app/lib/serverActions'
 
 const formSchema = z.object({
   name: z
@@ -45,19 +45,21 @@ function CreateBoardForm({ closeModal }: { closeModal: Function }) {
     resolver: zodResolver(formSchema),
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO hanle dublicate board names + invalid
-    const res = await clientAPIActions.createBoardFetcher(values.name)
+  async function onAction(formData: FormData) {
+    // TODO handle zod errors
+    const name = formData.get('name') as string
+    const res = await createBoardAction(name)
     if (!res) {
       console.log(res)
       return
     }
     closeModal()
   }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form action={async formData => {
+        await onAction(formData)
+      }} className="space-y-8">
         <FormField
           control={form.control}
           name="name"
