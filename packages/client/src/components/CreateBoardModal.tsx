@@ -45,21 +45,19 @@ function CreateBoardForm({ closeModal }: { closeModal: Function }) {
     resolver: zodResolver(formSchema),
   })
 
-  async function onAction(formData: FormData) {
-    // TODO handle zod errors
-    const name = formData.get('name') as string
-    const res = await createBoardAction(name)
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    // TODO hanle dublicate board names + invalid
+    const res = await createBoardAction(data.name)
     if (!res) {
       console.log(res)
       return
     }
     closeModal()
   }
+
   return (
     <Form {...form}>
-      <form action={async formData => {
-        await onAction(formData)
-      }} className="space-y-8">
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="name"
