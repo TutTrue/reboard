@@ -13,7 +13,12 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2'
 
-function DropdownMenuWithAlert({ boardId }: { boardId: string }) {
+import { deleteBoardAction } from '@/app/lib/serverActions'
+
+function BoardOptionDropdownMenu({ boardId }: { boardId: string }) {
+  async function handleDelete() {
+    await deleteBoardAction(boardId)
+  }
   return (
     <>
       <DropdownMenu>
@@ -26,7 +31,7 @@ function DropdownMenuWithAlert({ boardId }: { boardId: string }) {
             <span>Edit</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="flex items-center gap-2">
+          <DropdownMenuItem className="flex items-center gap-2" onClick={handleDelete}>
             <HiOutlineTrash size={18} />
             <span>Delete</span>
           </DropdownMenuItem>
@@ -36,4 +41,4 @@ function DropdownMenuWithAlert({ boardId }: { boardId: string }) {
   )
 }
 
-export default DropdownMenuWithAlert
+export default BoardOptionDropdownMenu

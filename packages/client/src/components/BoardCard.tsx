@@ -72,7 +72,7 @@ export default function BoardCard({ board, session }: BoardCardProps) {
             <h4>Lists:</h4>
             <div className="flex flex-wrap gap-2">
               {board.List.map((list) => (
-                <ListCard list={list} />
+                <ListCard key={list.id} list={list} />
               ))}
             </div>
           </div>

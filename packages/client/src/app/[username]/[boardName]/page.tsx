@@ -1,5 +1,5 @@
 import { options } from '@/app/api/auth/[...nextauth]/options'
-import { serverAPIActions } from '@/app/lib/serverFetcher'
+import { getBoard } from '@/app/lib/serverActions'
 import Container from '@/components/Container'
 import { BoardWithRelations } from '@/types'
 import { getServerSession } from 'next-auth'
@@ -26,7 +26,7 @@ function ListView({ board }: { board: BoardWithRelations | null }) {
 
 async function BoardView({ params: { boardName } }: BoardViewProps) {
   const session = await getServerSession(options)
-  const board = await serverAPIActions.getBoard(
+  const board = await getBoard(
     session?.user.username as string,
     boardName
   )
