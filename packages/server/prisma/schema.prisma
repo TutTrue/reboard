@@ -79,12 +79,13 @@ model Task {
 }
 
 model Action {
-  id            String     @id @default(uuid())
-  type          ActionType
-  takenByUserId String
-  createdAt     DateTime   @default(now())
+  id        String     @id @default(uuid())
+  type      ActionType
+  userId    String
+  message   String?
+  createdAt DateTime   @default(now())
 
-  User User @relation(fields: [takenByUserId], references: [id])
+  User User @relation(fields: [userId], references: [id])
 }
 
 enum ActionType {
