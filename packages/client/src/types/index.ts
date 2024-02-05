@@ -36,3 +36,13 @@ export type BoardWithRelations = IBoard & {
   UserBoards: IUser[]
   Owner: IUser
 }
+
+export interface APIError {
+  error: {
+    issues: {
+      code: string
+      message: string
+      path: string[]
+    }[]
+  }
+}
