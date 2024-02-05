@@ -21,10 +21,7 @@ app.get('/:boardId', async (c) => {
       where: {
         id: boardId,
         // check whether the user owns the board, or have access to it
-        OR: [
-          { ownerId: decodedJwtPayload?.id },
-          { UserBoards: { some: { id: decodedJwtPayload?.id } } },
-        ],
+        UserBoards: { some: { id: decodedJwtPayload?.id } },
       },
       include: {
         List: {
@@ -47,7 +44,7 @@ app.get('/:boardId', async (c) => {
     })
     if (!board) return c.json({ message: 'Board not found' }, 404)
 
-    return c.json(board.List)
+    return c.json(board.List, 200)
   } catch (e) {
     return c.json('internal server error', 500)
   }
@@ -73,17 +70,14 @@ app.post(
         where: {
           id: boardId,
           // check whether the user owns the board, or have access to it
-          OR: [
-            { ownerId: decodedJwtPayload?.id },
-            { UserBoards: { some: { id: decodedJwtPayload?.id } } },
-          ],
+          UserBoards: { some: { id: decodedJwtPayload?.id } },
         },
       })
       if (!board) return c.json({ message: 'Board not found' }, 404)
 
       const newList = await prisma.list.create({ data: { name, boardId } })
 
-      return c.json(newList)
+      return c.json(newList, 201)
     } catch (e) {
       return c.json('internal server error', 500)
     }
@@ -112,10 +106,7 @@ app.patch(
           Board: {
             id: boardId,
             // check whether the user owns the board, or have access to it
-            OR: [
-              { ownerId: decodedJwtPayload?.id },
-              { UserBoards: { some: { id: decodedJwtPayload?.id } } },
-            ],
+            UserBoards: { some: { id: decodedJwtPayload?.id } },
           },
         },
       })
@@ -126,7 +117,7 @@ app.patch(
         data: { name },
       })
 
-      return c.json(updatedListData)
+      return c.json(updatedListData, 200)
     } catch (e) {
       return c.json('internal server error', 500)
     }
@@ -145,10 +136,7 @@ app.delete('/:listId', async (c) => {
         id: listId,
         Board: {
           // check whether the user owns the board, or have access to it
-          OR: [
-            { ownerId: decodedJwtPayload?.id },
-            { UserBoards: { some: { id: decodedJwtPayload?.id } } },
-          ],
+          UserBoards: { some: { id: decodedJwtPayload?.id } },
         },
       },
     })
@@ -159,15 +147,12 @@ app.delete('/:listId', async (c) => {
         id: listId,
         // make sure the user owns the board, or have access to it
         Board: {
-          OR: [
-            { ownerId: decodedJwtPayload?.id },
-            { UserBoards: { some: { id: decodedJwtPayload?.id } } },
-          ],
+          UserBoards: { some: { id: decodedJwtPayload?.id } },
         },
       },
     })
 
-    return c.json({ success: true })
+    return c.json({}, 200)
   } catch (e) {
     return c.json('internal server error', 500)
   }
