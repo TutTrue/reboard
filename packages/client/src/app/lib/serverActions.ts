@@ -62,3 +62,22 @@ export async function deleteBoardAction(
 
   return res.data
 }
+
+export async function createListAction(
+  name: string,
+  boardId: string
+): Promise<BoardWithRelations | null> {
+  const res = await fetcher.post(
+    `/lists/${boardId}`,
+    { name, boardId },
+    {
+      headers: {
+        Authorization: await getToken(),
+      },
+    }
+  )
+
+  if (res.status === 500 || res.status === 401) return null
+  revalidatePath('/ListView')
+  return res.data
+}
