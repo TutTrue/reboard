@@ -88,7 +88,7 @@ app.post(
         where: {
           name,
           UserBoards: {
-            every: {
+            some: {
               id: decodedJwtPayload?.id,
             },
           },

@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { createBoardAction } from '@/app/lib/serverActions'
+import toast from 'react-hot-toast'
 
 const formSchema = z.object({
   name: z
@@ -39,19 +40,24 @@ const formSchema = z.object({
     }),
 })
 
+function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
 
-function CreateBoardForm({ closeModal }: { closeModal: Function }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    // TODO hanle dublicate board names + invalid
-    const res = await createBoardAction(data.name)
-    if (!res) {
-      console.log(res)
+    const res = await createBoardAction(data.name, '/hasssanezzz')
+
+    if (!res.success) {
+      console.log('ERROR')
+      res.error.error.issues.forEach((error) =>
+        form.setError('name', { message: error.message })
+      )
       return
     }
+
+    toast.success('Board created successfully')
     closeModal()
   }
 
@@ -86,6 +92,10 @@ function CreateBoardForm({ closeModal }: { closeModal: Function }) {
 export function CreateBoardModal() {
   const [isModalActive, setIsModalActive] = useState(false)
 
+  function closeModal() {
+    setIsModalActive(false)
+  }
+
   return (
     <Dialog open={isModalActive} onOpenChange={setIsModalActive}>
       <DialogTrigger asChild>
@@ -100,7 +110,7 @@ export function CreateBoardModal() {
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <CreateBoardForm closeModal={() => setIsModalActive(false)} />
+          <CreateBoardForm closeModal={closeModal} />
         </DialogDescription>
       </DialogContent>
     </Dialog>

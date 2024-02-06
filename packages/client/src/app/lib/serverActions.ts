@@ -2,6 +2,11 @@
 import { BoardWithRelations } from '@/types'
 import { revalidatePath } from 'next/cache'
 import { fetcher, getToken } from '@/app/lib/fetcher'
+import { APIError } from '@/types/index'
+
+type APIRespone<T> =
+  | { success: false; error: APIError }
+  | { success: true; data: T }
 
 export async function getBoards(): Promise<BoardWithRelations[] | null> {
   const res = await fetcher.get(`/boards`, {
@@ -31,21 +36,26 @@ export async function getBoard(
 }
 
 export async function createBoardAction(
-  name: string
-): Promise<BoardWithRelations | null> {
-  const res = await fetcher.post(
-    '/boards',
-    { name },
-    {
-      headers: {
-        Authorization: await getToken(),
-      },
-    }
-  )
+  name: string,
+  pathToRevalidate?: string
+): Promise<APIRespone<BoardWithRelations>> {
+  try {
+    const res = await fetcher.post(
+      '/boards',
+      { name },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
 
-  if (res.status === 500 || res.status === 401) return null
-  if (res) revalidatePath('/dashBoard')
-  return res.data
+    revalidatePath(pathToRevalidate || '/')
+
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
 }
 
 export async function deleteBoardAction(
