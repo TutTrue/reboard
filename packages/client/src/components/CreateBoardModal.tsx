@@ -44,6 +44,9 @@ function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+    },
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {

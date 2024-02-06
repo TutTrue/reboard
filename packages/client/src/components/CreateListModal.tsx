@@ -21,6 +21,9 @@ const formSchema = z.object({
 function CreateListModal({ board }: { board: BoardWithRelations | null }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+    },
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -44,8 +47,6 @@ function CreateListModal({ board }: { board: BoardWithRelations | null }) {
                   className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl px-3 py-2 w-full"
                   placeholder="New list..."
                   {...field}
-                  value={field.value || ''}
-                  onChange={(e) => field.onChange(e.target.value)}
                 />
               </FormControl>
               <FormMessage />
