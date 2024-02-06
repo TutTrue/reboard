@@ -69,6 +69,9 @@ app.get('/:username/:boardName', async (c) => {
             },
           },
         },
+        orderBy: {
+          createdAt: 'asc'
+        }
       },
       Owner: true,
     },
