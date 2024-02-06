@@ -23,16 +23,20 @@ export async function getBoards(): Promise<BoardWithRelations[] | null> {
 export async function getBoard(
   username: string,
   boardName: string
-): Promise<BoardWithRelations | null> {
-  const res = await fetcher.get(`/boards/${username}/${boardName}`, {
-    headers: {
-      Authorization: await getToken(),
-    },
-  })
+): Promise<APIRespone<BoardWithRelations>> {
+  try {
+    const res = await fetcher.get(`/boards/${username}/${boardName}`, {
+      headers: {
+        Authorization: await getToken(),
+      },
+    })
 
-  if (res.status === 500 || res.status === 401) return null
+    revalidatePath(`/${username}/${boardName}`)
 
-  return res.data
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
 }
 
 export async function createBoardAction(

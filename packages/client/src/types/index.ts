@@ -9,7 +9,7 @@ export interface IUser {
 export interface ITask {
   id: string
   text: string
-  label: string
+  label?: string
   completed: boolean
   creatorId: string
   boardId: string
@@ -30,9 +30,17 @@ export interface IBoard {
   createdAt: Date
 }
 
+export type TaskWithRelations = ITask & {
+  Creator: Omit<IUser, 'email'>
+}
+
+export type ListWithRelations = IList & {
+  Task: TaskWithRelations[]
+}
+
 export type BoardWithRelations = IBoard & {
   Task: ITask[]
-  List: IList[]
+  List: ListWithRelations[]
   UserBoards: IUser[]
   Owner: IUser
 }
