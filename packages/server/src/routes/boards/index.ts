@@ -54,8 +54,22 @@ app.get('/:username/:boardName', async (c) => {
       },
     },
     include: {
-      List: true,
-      Task: true,
+      List: {
+        include: {
+          Task: {
+            include: {
+              Creator: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  username: true,
+                  profilePictureURL: true,
+                },
+              },
+            },
+          },
+        },
+      },
       Owner: true,
     },
   })
