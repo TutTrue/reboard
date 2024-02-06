@@ -24,7 +24,7 @@ async function BoardView({ params: { boardName } }: BoardViewProps) {
       <div className="flex justify-between items-center gap-2">
         <h2 className="font-bold text-3xl my-10">{response.data.name}</h2>
 
-        <CreateListModal />
+        <CreateListModal boardId={response.data.id} />
       </div>
 
       <ListView board={response.data} session={session!} />

@@ -25,7 +25,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
-import { createBoardAction } from '@/app/lib/serverActions'
+import { createListAction } from '@/app/lib/serverActions'
 import toast from 'react-hot-toast'
 
 const formSchema = z.object({
@@ -40,13 +40,16 @@ const formSchema = z.object({
     }),
 })
 
-function CreateListForm({ closeModal }: { closeModal: () => void }) {
+function CreateListForm({ closeModal, boardId }: { closeModal: () => void, boardId: string}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+    },
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const res = await createBoardAction(data.name, '/hasssanezzz')
+    const res = await createListAction(data.name, boardId)
 
     if (!res.success) {
       res.error.error.issues.forEach((error) =>
@@ -55,7 +58,7 @@ function CreateListForm({ closeModal }: { closeModal: () => void }) {
       return
     }
 
-    toast.success('Board created successfully')
+    toast.success('List created successfully')
     closeModal()
   }
 
@@ -87,7 +90,7 @@ function CreateListForm({ closeModal }: { closeModal: () => void }) {
   )
 }
 
-export function CreateListModal() {
+export function CreateListModal({boardId}: {boardId: string}) {
   const [isModalActive, setIsModalActive] = useState(false)
 
   function closeModal() {
@@ -109,7 +112,7 @@ export function CreateListModal() {
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <CreateListForm closeModal={closeModal} />
+          <CreateListForm closeModal={closeModal} boardId={boardId} />
         </DialogDescription>
       </DialogContent>
     </Dialog>

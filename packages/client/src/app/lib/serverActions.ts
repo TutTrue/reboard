@@ -1,5 +1,5 @@
 'use server'
-import { BoardWithRelations } from '@/types'
+import { BoardWithRelations, ListWithRelations } from '@/types'
 import { revalidatePath } from 'next/cache'
 import { fetcher, getToken } from '@/app/lib/fetcher'
 import { APIError } from '@/types/index'
@@ -80,18 +80,60 @@ export async function deleteBoardAction(
 export async function createListAction(
   name: string,
   boardId: string
-): Promise<BoardWithRelations | null> {
-  const res = await fetcher.post(
-    `/lists/${boardId}`,
-    { name, boardId },
-    {
+): Promise<APIRespone<ListWithRelations>> {
+  try {
+    const res = await fetcher.post(
+      `/lists/${boardId}`,
+      { name, boardId },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
+    revalidatePath('/ListView')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function deleteListAction(
+  id: string
+): Promise<APIRespone<ListWithRelations>> {
+  try {
+    const res = await fetcher.delete(`/lists/${id}`, {
       headers: {
         Authorization: await getToken(),
       },
-    }
-  )
+    })
 
-  if (res.status === 500 || res.status === 401) return null
-  revalidatePath('/ListView')
-  return res.data
+    revalidatePath('/ListView')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function updateListAction(
+  ListId: string,
+  boardId: string,
+  name: string
+): Promise<APIRespone<ListWithRelations>> {
+  try {
+    const res = await fetcher.patch(
+      `/lists/${boardId}/${ListId}`,
+      { name },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+    revalidatePath('/ListView')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
 }
