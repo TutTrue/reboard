@@ -54,6 +54,14 @@ app.get('/:username/:boardName', async (c) => {
       },
     },
     include: {
+      UserBoards: {
+        select: {
+          id: true,
+          fullName: true,
+          username: true,
+          profilePictureURL: true,
+        },
+      },
       List: {
         include: {
           Task: {
@@ -70,8 +78,8 @@ app.get('/:username/:boardName', async (c) => {
           },
         },
         orderBy: {
-          createdAt: 'asc'
-        }
+          createdAt: 'asc',
+        },
       },
       Owner: true,
     },
