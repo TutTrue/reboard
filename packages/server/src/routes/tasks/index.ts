@@ -32,37 +32,50 @@ app.get('/:boardId', async (c) => {
 })
 
 app.post(
-  '/:boardId',
+  '/:listId',
   zValidator(
     'json',
     z.object({
       text: z.string().min(2).max(255),
       label: z.string().min(2).max(255),
-      listId: z.string().uuid(),
     })
   ),
   async (c) => {
     try {
       const decodedJwtPayload = c.get('decodedJwtPayload')
-      const { boardId } = c.req.param()
-      const { text, label, listId } = c.req.valid('json')
-      const board = await prisma.board.findUnique({
+      const { listId } = c.req.param()
+      const { text, label } = c.req.valid('json')
+      const list = await prisma.list.findUnique({
+        include: {
+          Board: {
+            include: {
+              UserBoards: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
         where: {
-          id: boardId,
-          UserBoards: { some: { id: decodedJwtPayload?.id } },
+          id: listId,
         },
       })
-      if (!board) return c.json({ message: 'Board not found' }, 404)
-      const list = await prisma.task.create({
+      if (!list) return c.json({ message: 'List not found' }, 404)
+      if (
+        !list.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
+      )
+        return c.json({ message: 'Unauthorized' }, 401)
+      const newList = await prisma.task.create({
         data: {
           text,
           label,
           listId,
-          boardId,
+          boardId: list.Board.id,
           creatorId: decodedJwtPayload?.id!,
         },
       })
-      return c.json(list, 201)
+      return c.json(newList, 201)
     } catch (e) {
       return c.json('internal server error', 500)
     }

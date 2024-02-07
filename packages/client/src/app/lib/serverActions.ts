@@ -1,5 +1,9 @@
 'use server'
-import { BoardWithRelations, ListWithRelations } from '@/types'
+import {
+  BoardWithRelations,
+  ListWithRelations,
+  TaskWithRelations,
+} from '@/types'
 import { revalidatePath } from 'next/cache'
 import { fetcher, getToken } from '@/app/lib/fetcher'
 import { APIError } from '@/types/index'
@@ -130,6 +134,28 @@ export async function updateListAction(
         },
       }
     )
+    revalidatePath('/ListView')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function createTaskAction(
+  listId: string,
+  text: string
+): Promise<APIRespone<TaskWithRelations>> {
+  try {
+    const res = await fetcher.post(
+      `/tasks/${listId}`,
+      { text, label: 'none' },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
     revalidatePath('/ListView')
     return { success: true, data: res.data }
   } catch (e: any) {
