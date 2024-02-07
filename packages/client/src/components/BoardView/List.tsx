@@ -24,13 +24,23 @@ import { ListWithRelations, TaskWithRelations } from '@/types'
 import TaskCard from './TaskCard'
 import { useOptimistic, useRef, useState } from 'react'
 import { Session } from 'next-auth'
-import { createTaskAction, deleteListAction, updateListAction } from '@/app/lib/serverActions'
+import {
+  createTaskAction,
+  deleteListAction,
+  updateListAction,
+} from '@/app/lib/serverActions'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-function ListCardDropDownMenu({ listId, setEditing }: { listId: string, setEditing: (editing: boolean) => void }) {
+function ListCardDropDownMenu({
+  listId,
+  setEditing,
+}: {
+  listId: string
+  setEditing: (editing: boolean) => void
+}) {
   async function handleDelete() {
     const res = await deleteListAction(listId)
     if (res.success) {
@@ -45,12 +55,18 @@ function ListCardDropDownMenu({ listId, setEditing }: { listId: string, setEditi
         <HiOutlineEllipsisHorizontal size={27} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="text-gray-500">
-        <DropdownMenuItem className="flex items-center gap-2" onClick={() => setEditing(true)}>
+        <DropdownMenuItem
+          className="flex items-center gap-2"
+          onClick={() => setEditing(true)}
+        >
           <HiOutlinePencil size={18} />
           <span>Edit</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="flex items-center gap-2" onClick={handleDelete}>
+        <DropdownMenuItem
+          className="flex items-center gap-2"
+          onClick={handleDelete}
+        >
           <HiOutlineTrash size={18} />
           <span>Delete</span>
         </DropdownMenuItem>
@@ -59,7 +75,13 @@ function ListCardDropDownMenu({ listId, setEditing }: { listId: string, setEditi
   )
 }
 
-function AddTaskForm({ listId, addTask }: { listId: string, addTask: (action: unknown) => void }) {
+function AddTaskForm({
+  listId,
+  addTask,
+}: {
+  listId: string
+  addTask: (action: unknown) => void
+}) {
   const ref = useRef<HTMLFormElement>(null)
 
   async function handleSubmit(formData: FormData) {
@@ -79,7 +101,7 @@ function AddTaskForm({ listId, addTask }: { listId: string, addTask: (action: un
   return (
     <form ref={ref} action={handleSubmit}>
       <Input
-        name='todo-text'
+        name="todo-text"
         placeholder="Add a task..."
         className="border-2 bg-gray-200 border-gray-400"
       />
@@ -108,7 +130,7 @@ function List({
           id: session.user.id,
           fullName: session?.user?.name || '',
           username: session.user.username,
-          profilePictureURL: session?.user.image || '', // TODO: image is not in user its profilePictureURL
+          profilePictureURL: session?.user.profilePictureURL || '',
         },
         creatorId: session.user.id,
         listId: list.id,
@@ -147,32 +169,33 @@ function List({
     <div className="flex flex-col gap-5">
       <div className="bg-white shadow-md border p-5 rounded-md min-w-[300px]">
         <header className="flex items-center justify-between gap-3">
-          {
-            editing ? (
-              <Form {...form}>
-                <form className="space-y-8" onSubmit={form.handleSubmit(handleListEdit)}>
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="Your new board's name"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </form>
-              </Form>
-            ) : (
-              <h2 className="text-xl font-semibold">{list.name}</h2>
-            )
-          }
+          {editing ? (
+            <Form {...form}>
+              <form
+                className="space-y-8"
+                onSubmit={form.handleSubmit(handleListEdit)}
+              >
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500"
+                          placeholder="Your new board's name"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </form>
+            </Form>
+          ) : (
+            <h2 className="text-xl font-semibold">{list.name}</h2>
+          )}
           <ListCardDropDownMenu listId={list.id} setEditing={setEditing} />
         </header>
       </div>

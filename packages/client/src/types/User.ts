@@ -7,11 +7,14 @@ declare module 'next-auth' {
   }
 }
 
+
+// TODO session type 'name' -> 'fullName'
 declare module 'next-auth' {
   interface Session {
     user: {
       id: string
       username: string
+      profilePictureURL: string
     } & DefaultSession['user']
     accessToken: string
   }
