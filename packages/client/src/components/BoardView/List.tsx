@@ -17,15 +17,14 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { BoardWithRelations, ListWithRelations, TaskWithRelations } from '@/types'
+import { ListWithRelations, TaskWithRelations } from '@/types'
 import TaskCard from './TaskCard'
 import { useOptimistic, useRef, useState } from 'react'
 import { Session } from 'next-auth'
-import { deleteListAction, updateListAction } from '@/app/lib/serverActions'
+import { createTaskAction, deleteListAction, updateListAction } from '@/app/lib/serverActions'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -60,16 +59,21 @@ function ListCardDropDownMenu({ listId, setEditing }: { listId: string, setEditi
   )
 }
 
-function AddTaskForm({ onSubmit }: { onSubmit: (text: string) => void }) {
+function AddTaskForm({ listId, addTask }: { listId: string, addTask: (action: unknown) => void }) {
   const ref = useRef<HTMLFormElement>(null)
 
-  function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
     ref.current?.reset()
 
     const text = formData.get('todo-text') as string
-    onSubmit(text)
+    addTask(text) // optimistic setter
 
-    // perform server action to add a todo
+    const res = await createTaskAction(listId, text)
+    if (!res.success) {
+      toast.error(res.error.error.issues[0].message || 'Failed to add task')
+      return
+    }
+    toast.success('Task added successfully')
   }
 
   return (
@@ -85,11 +89,9 @@ function AddTaskForm({ onSubmit }: { onSubmit: (text: string) => void }) {
 
 function List({
   list,
-  board,
   session,
 }: {
   list: ListWithRelations
-  board: BoardWithRelations
   session: Session
 }) {
   const [editing, setEditing] = useState(false)
@@ -106,7 +108,7 @@ function List({
           id: session.user.id,
           fullName: session?.user?.name || '',
           username: session.user.username,
-          profilePictureURL: session?.user.image || '',
+          profilePictureURL: session?.user.image || '', // TODO: image is not in user its profilePictureURL
         },
         creatorId: session.user.id,
         listId: list.id,
@@ -116,12 +118,8 @@ function List({
     }
   )
 
-  function handleSubmit(text: string) {
-    addTask(text)
-  }
-
   async function handleListEdit(data: z.infer<typeof formSchema>) {
-    const res = await updateListAction(list.id, board.id, data.name)
+    const res = await updateListAction(list.id, data.name)
     setEditing(false)
     if (res.success) {
       toast.success('List updated successfully')
@@ -181,13 +179,11 @@ function List({
 
       <div className="bg-white">
         {optimisticTasks.map((task) => (
-          <>
-            <TaskCard key={task.id} task={task} />
-          </>
+          <TaskCard key={task.id} task={task} />
         ))}
       </div>
 
-      <AddTaskForm onSubmit={handleSubmit} />
+      <AddTaskForm addTask={addTask} listId={list.id} />
     </div>
   )
 }
