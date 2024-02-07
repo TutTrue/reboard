@@ -119,7 +119,7 @@ app.delete('/:taskId', async (c) => {
 })
 
 app.patch(
-  ':boardId/:taskId',
+  '/:taskId',
   zValidator(
     'json',
     z.object({
@@ -131,21 +131,29 @@ app.patch(
   async (c) => {
     try {
       const decodedJwtPayload = c.get('decodedJwtPayload')
-      const { boardId, taskId } = c.req.param()
+      const { taskId } = c.req.param()
       const { text, label, completed } = c.req.valid('json')
-      const board = await prisma.board.findUnique({
-        select: {
-          Task: true,
+      const task = await prisma.task.findUnique({
+        include: {
+          Board: {
+            include: {
+              UserBoards: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
         },
         where: {
-          id: boardId,
-          UserBoards: { some: { id: decodedJwtPayload?.id } },
-          Task: { some: { id: taskId } },
+          id: taskId,
         },
       })
-      if (!board) return c.json({ message: 'Task not found' }, 404)
-      const task = board.Task.find((task) => task.id === taskId)
       if (!task) return c.json({ message: 'Task not found' }, 404)
+      if (
+        !task.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
+      )
+        return c.json({ message: 'Unauthorized' }, 401)
       const updatedTask = await prisma.task.update({
         where: {
           id: taskId,
