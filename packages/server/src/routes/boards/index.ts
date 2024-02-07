@@ -23,6 +23,9 @@ app.get('/', async (c) => {
             UserBoards: true,
             Owner: true,
           },
+          orderBy: {
+            createdAt: 'asc'
+          }
         },
       },
       where: {
