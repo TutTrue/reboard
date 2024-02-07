@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { HiOutlineLogout, HiOutlineSun } from 'react-icons/hi'
+import { HiOutlineLogout, HiOutlineSun, HiOutlineUsers } from 'react-icons/hi'
 
 export default async function NavBar() {
   const session = await getServerSession()
@@ -41,11 +41,14 @@ export default async function NavBar() {
               <DropdownMenuContent className="text-gray-500">
                 <DropdownMenuLabel>Settings</DropdownMenuLabel>
                 <DropdownMenuItem className="flex items-center gap-2">
+                  <HiOutlineUsers size={18} />
+                  <span>Invitations</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex items-center gap-2">
                   <HiOutlineSun size={18} />
                   <span>Theme</span>
                 </DropdownMenuItem>
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
-
                 <DropdownMenuItem asChild>
                   <Link
                     href="/api/auth/signout?callbackUrl=/"
