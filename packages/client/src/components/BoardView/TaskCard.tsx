@@ -11,8 +11,18 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { TaskWithRelations } from '@/types'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
+import { deleteTaskAction } from '@/app/lib/serverActions'
 
-function TaskDropDownMenu() {
+function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
+  async function handleDelete() {
+    const res = await deleteTaskAction(task.id)
+    if (!res.success) {
+      toast.error('Error deleting task')
+      return
+    }
+    toast.success('Task deleted successfully')
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -24,7 +34,7 @@ function TaskDropDownMenu() {
           <span>Edit</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="flex items-center gap-2">
+        <DropdownMenuItem className="flex items-center gap-2" onClick={handleDelete}>
           <HiOutlineTrash size={18} />
           <span>Delete</span>
         </DropdownMenuItem>
@@ -48,7 +58,7 @@ function TaskCard({ task }: { task: TaskWithRelations }) {
         <span>{task.text}</span>
       </div>
 
-      <TaskDropDownMenu />
+      <TaskDropDownMenu task={task} />
     </div>
   )
 }

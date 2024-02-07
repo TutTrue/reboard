@@ -162,3 +162,20 @@ export async function createTaskAction(
     return { success: false, error: e.response.data }
   }
 }
+
+export async function deleteTaskAction(
+  id: string
+): Promise<APIRespone<TaskWithRelations>> {
+  try {
+    const res = await fetcher.delete(`/tasks/${id}`, {
+      headers: {
+        Authorization: await getToken(),
+      },
+    })
+
+    revalidatePath('/ListView')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
