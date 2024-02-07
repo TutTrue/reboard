@@ -27,7 +27,7 @@ export default async function Dashboard({
         <CreateBoardModal />
       </div>
 
-      <div className="flex items-start flex-wrap gap-5">
+      <div className="grid grid-cols-2 gap-3">
         {boards?.map((board) => (
           <BoardCard key={board.id} board={board} session={session} />
         ))}
