@@ -8,14 +8,15 @@ import { CreateListModal } from '@/components/CreateListModal'
 interface BoardViewProps {
   params: {
     boardName: string
+    username: string
   }
 }
 
 import ListView from '@/components/BoardView/ListView'
 
-async function BoardView({ params: { boardName } }: BoardViewProps) {
+async function BoardView({ params: { boardName, username } }: BoardViewProps) {
   const session = await getServerSession(options)
-  const response = await getBoard(session?.user.username as string, boardName)
+  const response = await getBoard(username as string, boardName)
 
   if (!response.success) return redirect('/')
 
