@@ -95,7 +95,7 @@ export async function createListAction(
       }
     )
 
-    revalidatePath('/ListView')
+    revalidatePath('/ListTab')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
@@ -112,7 +112,7 @@ export async function deleteListAction(
       },
     })
 
-    revalidatePath('/ListView')
+    revalidatePath('/ListTab')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
@@ -133,7 +133,7 @@ export async function updateListAction(
         },
       }
     )
-    revalidatePath('/ListView')
+    revalidatePath('/ListTab')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
@@ -155,7 +155,7 @@ export async function createTaskAction(
       }
     )
 
-    revalidatePath('/ListView')
+    revalidatePath('/ListTab')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
@@ -172,7 +172,7 @@ export async function deleteTaskAction(
       },
     })
 
-    revalidatePath('/ListView')
+    revalidatePath('/ListTab')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
@@ -196,7 +196,7 @@ export async function updateTaskAction(
       }
     )
 
-    revalidatePath('/ListView')
+    revalidatePath('/ListTab')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }

@@ -4,6 +4,7 @@ import { options } from '@/app/api/auth/[...nextauth]/options'
 import { getBoard } from '@/app/lib/serverActions'
 import Container from '@/components/Container'
 import { CreateListModal } from '@/components/CreateListModal'
+import TabBar from '@/components/BoardView/TabBar'
 
 interface BoardViewProps {
   params: {
@@ -11,8 +12,6 @@ interface BoardViewProps {
     username: string
   }
 }
-
-import ListView from '@/components/BoardView/ListView'
 
 async function BoardView({ params: { boardName, username } }: BoardViewProps) {
   const session = await getServerSession(options)
@@ -28,7 +27,7 @@ async function BoardView({ params: { boardName, username } }: BoardViewProps) {
         <CreateListModal boardId={response.data.id} />
       </div>
 
-      <ListView board={response.data} session={session!} />
+      <TabBar board={response.data} session={session!} />
     </Container>
   )
 }

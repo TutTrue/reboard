@@ -2,7 +2,7 @@ import { BoardWithRelations } from "@/types"
 import List from "./List"
 import { Session } from "next-auth"
 
-function ListView({ board, session }: { board: BoardWithRelations, session: Session }) {
+function ListTab({ board, session }: { board: BoardWithRelations, session: Session }) {
   return (
     <div className="flex gap-5 items-start w-full overflow-auto pb-5 px-1">
       {board?.List.map((list) => (
@@ -12,4 +12,4 @@ function ListView({ board, session }: { board: BoardWithRelations, session: Sess
   )
 }
 
-export default ListView
+export default ListTab
