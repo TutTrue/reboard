@@ -179,3 +179,27 @@ export async function deleteTaskAction(
     return { success: false, error: e.response.data }
   }
 }
+
+export async function updateTaskAction(
+  taskId: string,
+  text: string | undefined,
+  label: string | undefined,
+  completed: boolean | undefined
+): Promise<APIRespone<TaskWithRelations>> {
+  try {
+    const res = await fetcher.patch(
+      `/tasks/${taskId}`,
+      { text, label, completed },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
+    revalidatePath('/ListView')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
