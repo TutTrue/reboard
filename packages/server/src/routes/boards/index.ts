@@ -24,8 +24,8 @@ app.get('/', async (c) => {
             Owner: true,
           },
           orderBy: {
-            createdAt: 'asc'
-          }
+            createdAt: 'asc',
+          },
         },
       },
       where: {
@@ -181,3 +181,54 @@ app.delete('/:boardId', async (c) => {
     return c.json('internal server error', 500)
   }
 })
+
+app.patch(
+  '/:boardId',
+  zValidator(
+    'json',
+    z.object({
+      username: z.string().min(1).max(255), // user to be removed
+    })
+  ),
+  async (c) => {
+    try {
+      const decodedJwtPayload = c.get('decodedJwtPayload')
+      const boardId = c.req.param('boardId')
+      const { username } = c.req.valid('json')
+
+      const board = await prisma.board.findFirst({
+        include: {
+          UserBoards: {
+            select: {
+              username: true,
+            },
+          },
+        },
+        where: {
+          id: boardId,
+          ownerId: decodedJwtPayload?.id,
+        },
+      })
+
+      if (!board) return c.json({ message: 'Board can not be found' }, 404)
+      if (!board.UserBoards.some((user) => user.username === username))
+        return c.json({ message: 'User not found' }, 404)
+
+      const updatedBoard = await prisma.board.update({
+        where: {
+          id: boardId,
+        },
+        data: {
+          UserBoards: {
+            disconnect: {
+              username,
+            },
+          },
+        },
+      })
+      return c.json(updatedBoard, 200)
+    } catch (e) {
+      return c.json('internal server error', 500)
+    }
+  }
+)
