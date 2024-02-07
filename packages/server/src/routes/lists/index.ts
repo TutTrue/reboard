@@ -86,7 +86,7 @@ app.post(
 
 // update list name
 app.patch(
-  '/:boardId/:listId',
+  '/:listId',
   zValidator(
     'json',
     z.object({
@@ -97,21 +97,33 @@ app.patch(
     try {
       const decodedJwtPayload = c.get('decodedJwtPayload')
       const { name } = c.req.valid('json')
-      const { boardId, listId } = c.req.param()
+      const { listId } = c.req.param()
 
       // make sure board exists and user have access to this board
       const list = await prisma.list.findUnique({
+        include: {
+          Board: {
+            include: {
+              UserBoards: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+        },
         where: {
           id: listId,
-          Board: {
-            id: boardId,
-            // check whether the user owns the board, or have access to it
-            UserBoards: { some: { id: decodedJwtPayload?.id } },
-          },
         },
       })
       if (!list) return c.json({ message: 'List not found' }, 404)
-
+      if (
+        !list.Board.UserBoards.some(
+          (userBoard) => userBoard.id === decodedJwtPayload?.id
+        )
+      ) {
+        return c.json({ message: 'Unauthorized' }, 401)
+      }
       const updatedListData = await prisma.list.update({
         where: { id: listId },
         data: { name },

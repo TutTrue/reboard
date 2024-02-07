@@ -118,12 +118,11 @@ export async function deleteListAction(
 
 export async function updateListAction(
   ListId: string,
-  boardId: string,
   name: string
 ): Promise<APIRespone<ListWithRelations>> {
   try {
     const res = await fetcher.patch(
-      `/lists/${boardId}/${ListId}`,
+      `/lists/${ListId}`,
       { name },
       {
         headers: {

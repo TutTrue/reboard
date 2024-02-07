@@ -85,11 +85,9 @@ function AddTaskForm({ onSubmit }: { onSubmit: (text: string) => void }) {
 
 function List({
   list,
-  board,
   session,
 }: {
   list: ListWithRelations
-  board: BoardWithRelations
   session: Session
 }) {
   const [editing, setEditing] = useState(false)
@@ -121,7 +119,7 @@ function List({
   }
 
   async function handleListEdit(data: z.infer<typeof formSchema>) {
-    const res = await updateListAction(list.id, board.id, data.name)
+    const res = await updateListAction(list.id, data.name)
     setEditing(false)
     if (res.success) {
       toast.success('List updated successfully')
