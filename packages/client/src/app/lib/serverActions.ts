@@ -1,10 +1,10 @@
 'use server'
+import { revalidatePath } from 'next/cache'
 import {
   BoardWithRelations,
   ListWithRelations,
   TaskWithRelations,
 } from '@/types'
-import { revalidatePath } from 'next/cache'
 import { fetcher, getToken } from '@/app/lib/fetcher'
 import { APIError } from '@/types/index'
 
@@ -45,7 +45,6 @@ export async function getBoard(
 
 export async function createBoardAction(
   name: string,
-  pathToRevalidate?: string
 ): Promise<APIRespone<BoardWithRelations>> {
   try {
     const res = await fetcher.post(
@@ -58,7 +57,7 @@ export async function createBoardAction(
       }
     )
 
-    revalidatePath(pathToRevalidate || '/')
+    revalidatePath('/Dashboard')
 
     return { success: true, data: res.data }
   } catch (e: any) {
@@ -76,7 +75,7 @@ export async function deleteBoardAction(
   })
 
   if (res.status === 500 || res.status === 404) return null
-  revalidatePath('/dashBoard')
+  revalidatePath('/Dashboard')
 
   return res.data
 }

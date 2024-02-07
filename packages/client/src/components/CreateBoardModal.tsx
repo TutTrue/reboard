@@ -1,9 +1,10 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { HiOutlinePlus } from 'react-icons/hi'
 import { z } from 'zod'
+import toast from 'react-hot-toast'
 
 import {
   Dialog,
@@ -13,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
   FormControl,
@@ -24,9 +25,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
 import { createBoardAction } from '@/app/lib/serverActions'
-import toast from 'react-hot-toast'
 
 const formSchema = z.object({
   name: z
@@ -50,10 +49,9 @@ function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const res = await createBoardAction(data.name, '/hasssanezzz')
+    const res = await createBoardAction(data.name)
 
     if (!res.success) {
-      console.log('ERROR')
       res.error.error.issues.forEach((error) =>
         form.setError('name', { message: error.message })
       )

@@ -6,7 +6,7 @@ import BoardCard from '@/components/BoardCard'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import { CreateBoardModal } from '@/components/CreateBoardModal'
 
-export default async function dashBoard({
+export default async function Dashboard({
   params: { username },
 }: {
   params: { username: string }
@@ -19,7 +19,7 @@ export default async function dashBoard({
 
   return (
     <Container>
-      <div className="flex justify-between items-center gap-2">
+      <div className="flex justify-between items-center gap-3">
         <h2 className="font-bold text-3xl my-10">
           Welcome back, {session?.user.name}!
         </h2>
@@ -27,7 +27,7 @@ export default async function dashBoard({
         <CreateBoardModal />
       </div>
 
-      <div className="grid grid-cols-3 gap-5">
+      <div className="flex items-start flex-wrap gap-5">
         {boards?.map((board) => (
           <BoardCard key={board.id} board={board} session={session} />
         ))}
