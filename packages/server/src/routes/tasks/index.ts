@@ -82,18 +82,31 @@ app.post(
   }
 )
 
-app.delete('/:boardId/:taskId', async (c) => {
+app.delete('/:taskId', async (c) => {
   try {
     const decodedJwtPayload = c.get('decodedJwtPayload')
-    const { boardId, taskId } = c.req.param()
-    const task = await prisma.board.findUnique({
+    const { taskId } = c.req.param()
+    const task = await prisma.task.findUnique({
+      include: {
+        Board: {
+          include: {
+            UserBoards: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
       where: {
-        id: boardId,
-        UserBoards: { some: { id: decodedJwtPayload?.id } },
-        Task: { some: { id: taskId } },
+        id: taskId,
       },
     })
     if (!task) return c.json({ message: 'Task not found' }, 404)
+    if (
+      !task.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
+    )
+      return c.json({ message: 'Unauthorized' }, 401)
     await prisma.task.delete({
       where: {
         id: taskId,
