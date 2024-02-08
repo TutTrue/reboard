@@ -1,9 +1,9 @@
 import { Session } from 'next-auth'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
-import { HiOutlineUserRemove } from 'react-icons/hi'
-import { Button } from '../ui/button'
 import { BoardWithRelations, IUser } from '@/types'
+import { HiOutlineUserRemove } from 'react-icons/hi'
+import { Button } from '@/components/ui/button'
 import { removeUserFromBoardAction } from '@/app/lib/serverActions'
 
 interface TeamTabProps {
@@ -24,7 +24,13 @@ export default function TeamTab({ board, authedUser }: TeamTabProps) {
   )
 }
 
-function Member({ user, board, authedUser }: { user: IUser, board: BoardWithRelations, authedUser: Session['user'] }) {
+interface MemberProps {
+  user: IUser
+  board: BoardWithRelations
+  authedUser: Session['user']
+}
+
+function Member({ user, board, authedUser }: MemberProps) {
 
   async function handleRemoveUser() {
     const res = await removeUserFromBoardAction(board.id, user.username)

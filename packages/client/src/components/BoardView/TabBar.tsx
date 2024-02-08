@@ -2,10 +2,10 @@
 
 import { Session } from 'next-auth'
 import { useSearchParams } from 'next/navigation'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BoardWithRelations } from '@/types'
-import ListTab from './ListTab'
-import TeamTab from './TeamTab'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import ListTab from '@/components/BoardView/ListTab'
+import TeamTab from '@/components/BoardView/TeamTab'
 
 interface TabsProps {
   session: Session

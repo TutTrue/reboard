@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
 import { getBoards } from '@/app/lib/serverActions'
+import { options } from '@/app/api/auth/[...nextauth]/options'
 import Container from '@/components/Container'
 import BoardCard from '@/components/BoardCard'
-import { options } from '@/app/api/auth/[...nextauth]/options'
-import { CreateBoardModal } from '@/components/CreateBoardModal'
+import CreateBoardModal from '@/components/CreateBoardModal'
 
 export default async function Dashboard({
   params: { username },

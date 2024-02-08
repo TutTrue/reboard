@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import { getBoard } from '@/app/lib/serverActions'
 import Container from '@/components/Container'
-import { CreateListModal } from '@/components/CreateListModal'
+import CreateListModal from '@/components/CreateListModal'
 import TabBar from '@/components/BoardView/TabBar'
 
 interface BoardViewProps {
@@ -13,7 +13,7 @@ interface BoardViewProps {
   }
 }
 
-async function BoardView({ params: { boardName, username } }: BoardViewProps) {
+export default async function BoardView({ params: { boardName, username } }: BoardViewProps) {
   const session = await getServerSession(options)
   const response = await getBoard(username as string, boardName)
 
@@ -31,5 +31,3 @@ async function BoardView({ params: { boardName, username } }: BoardViewProps) {
     </Container>
   )
 }
-
-export default BoardView

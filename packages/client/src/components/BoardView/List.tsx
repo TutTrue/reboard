@@ -1,5 +1,14 @@
 'use client'
+import { useOptimistic, useRef, useState } from 'react'
+import { Session } from 'next-auth'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import toast from 'react-hot-toast'
+import { ListWithRelations, TaskWithRelations } from '@/types'
 
+import TaskCard from '@/components/BoardView/TaskCard'
+import { Input } from '@/components/ui/input'
 import {
   HiOutlineEllipsisHorizontal,
   HiOutlinePencil,
@@ -19,20 +28,12 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { ListWithRelations, TaskWithRelations } from '@/types'
-import TaskCard from './TaskCard'
-import { useOptimistic, useRef, useState } from 'react'
-import { Session } from 'next-auth'
 import {
   createTaskAction,
   deleteListAction,
   updateListAction,
 } from '@/app/lib/serverActions'
-import toast from 'react-hot-toast'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+
 
 function ListCardDropDownMenu({
   listId,
@@ -109,7 +110,7 @@ function AddTaskForm({
   )
 }
 
-function List({
+export default function List({
   list,
   session,
 }: {
@@ -210,5 +211,3 @@ function List({
     </div>
   )
 }
-
-export default List

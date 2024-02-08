@@ -1,10 +1,13 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { HiOutlinePlus } from 'react-icons/hi'
 import { z } from 'zod'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import { createListAction } from '@/app/lib/serverActions'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { HiOutlinePlus } from 'react-icons/hi'
 import {
   Dialog,
   DialogContent,
@@ -24,9 +27,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
-import { createListAction } from '@/app/lib/serverActions'
-import toast from 'react-hot-toast'
 
 const formSchema = z.object({
   name: z
@@ -90,7 +90,7 @@ function CreateListForm({ closeModal, boardId }: { closeModal: () => void, board
   )
 }
 
-export function CreateListModal({boardId}: {boardId: string}) {
+export default function CreateListModal({boardId}: {boardId: string}) {
   const [isModalActive, setIsModalActive] = useState(false)
 
   function closeModal() {
