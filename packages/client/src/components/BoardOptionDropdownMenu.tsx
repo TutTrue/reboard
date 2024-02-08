@@ -1,5 +1,7 @@
 'use client'
 
+import { deleteBoardAction } from '@/app/lib/serverActions'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +15,7 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2'
 
-import { deleteBoardAction } from '@/app/lib/serverActions'
-
-function BoardOptionDropdownMenu({ boardId }: { boardId: string }) {
+export default function BoardOptionDropdownMenu({ boardId }: { boardId: string }) {
   async function handleDelete() {
     await deleteBoardAction(boardId)
   }
@@ -40,5 +40,3 @@ function BoardOptionDropdownMenu({ boardId }: { boardId: string }) {
     </>
   )
 }
-
-export default BoardOptionDropdownMenu

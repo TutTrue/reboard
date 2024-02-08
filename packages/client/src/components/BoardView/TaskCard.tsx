@@ -1,4 +1,8 @@
+import Image from 'next/image'
+import toast from 'react-hot-toast'
+import { TaskWithRelations } from '@/types'
 import {
+  HiOutlineCheck,
   HiOutlineEllipsisHorizontal,
   HiOutlinePencil,
   HiOutlineTrash,
@@ -9,11 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { TaskWithRelations } from '@/types'
-import Image from 'next/image'
-import toast from 'react-hot-toast'
 import { deleteTaskAction, updateTaskAction } from '@/app/lib/serverActions'
-import { HiOutlineCheck } from 'react-icons/hi'
 
 function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
   async function handleDelete() {
@@ -47,7 +47,7 @@ function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
   )
 }
 
-function TaskCard({ task }: { task: TaskWithRelations }) {
+export default function TaskCard({ task }: { task: TaskWithRelations }) {
 
   async function handleToggleComplete() {
     const res = await updateTaskAction(
@@ -92,5 +92,3 @@ function TaskCard({ task }: { task: TaskWithRelations }) {
     </div>
   )
 }
-
-export default TaskCard

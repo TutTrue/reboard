@@ -1,8 +1,8 @@
-import { BoardWithRelations } from "@/types"
-import List from "./List"
 import { Session } from "next-auth"
+import { BoardWithRelations } from "@/types"
+import List from "@/components/BoardView/List"
 
-function ListTab({ board, session }: { board: BoardWithRelations, session: Session }) {
+export default function ListTab({ board, session }: { board: BoardWithRelations, session: Session }) {
   return (
     <div className="flex gap-5 items-start w-full overflow-auto pb-5 px-1">
       {board?.List.map((list) => (
@@ -11,5 +11,3 @@ function ListTab({ board, session }: { board: BoardWithRelations, session: Sessi
     </div>
   )
 }
-
-export default ListTab

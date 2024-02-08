@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Session } from 'next-auth'
-import { HiOutlinePaperClip } from 'react-icons/hi2'
-import { BoardWithRelations, IList } from '@/types/index'
-import BoardOptionDropdownMenu from './BoardOptionDropdownMenu'
 import { useMemo } from 'react'
+import { BoardWithRelations, IList } from '@/types/index'
+import { HiOutlinePaperClip } from 'react-icons/hi2'
+import BoardOptionDropdownMenu from '@/components/BoardOptionDropdownMenu'
 
 interface BoardCardProps {
   board: BoardWithRelations

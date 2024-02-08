@@ -1,6 +1,8 @@
 import { Hono } from 'hono'
 import { prisma } from '../../db/index'
 import { AuthVariables, authMiddleware } from '../../middleware'
+import { createErrors } from '../../utils'
+import { ERROR_CODES } from '../../constants'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -39,7 +41,16 @@ app.get('/', async (c) => {
       received: receivedInvitations,
     })
   } catch (e) {
-    return c.json({ message: 'Internal server error' }, 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -54,13 +65,32 @@ app.post('/:username/:boardName', async (c) => {
     // make sure username exists
     const invitedUser = await prisma.user.findUnique({ where: { username } })
     if (!invitedUser)
-      return c.json({ message: 'Provided username not found' }, 401)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'User not found',
+            path: 'username',
+          },
+        ]),
+        401
+      )
 
     // make sure board exist and user owns the board
     const board = await prisma.board.findFirst({
       where: { name: boardName, ownerId: decodedJwtPayload?.id },
     })
-    if (!board) return c.json({ message: 'Provided board ID not found' }, 404)
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: `Board not found or user ${decodedJwtPayload?.username} is not the owner of the board`,
+            path: ['boardName', 'username'],
+          },
+        ]),
+        404
+      )
 
     // make sure user is not already invited
     const oldInvitaion = await prisma.invitation.findFirst({
@@ -71,7 +101,16 @@ app.post('/:username/:boardName', async (c) => {
       },
     })
     if (oldInvitaion)
-      return c.json({ message: 'User is already invited/joined' }, 401)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.DUBLICATE_ENTRY,
+            message: `User ${invitedUser.username} is already invited to the board`,
+            path: 'username',
+          },
+        ]),
+        401
+      )
 
     const newInvitation = await prisma.invitation.create({
       data: {
@@ -83,7 +122,16 @@ app.post('/:username/:boardName', async (c) => {
 
     return c.json(newInvitation)
   } catch (e) {
-    return c.json({ message: 'Internal server error' }, 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -102,7 +150,17 @@ app.patch('/accept/:invitationId', async (c) => {
     })
 
     // make sure invitation exists
-    if (!invitaion) return c.json({ message: 'Inviation not found' }, 404)
+    if (!invitaion)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'Invitation not found',
+            path: 'invitationId',
+          },
+        ]),
+        404
+      )
 
     // accept invitation
     const acceptInvitationTransaction = prisma.invitation.update({
@@ -131,7 +189,16 @@ app.patch('/accept/:invitationId', async (c) => {
 
     return c.json({ success: true })
   } catch (e) {
-    return c.json({ message: 'Internal server error' }, 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -150,7 +217,17 @@ app.patch('/archive/:invitationId', async (c) => {
     })
 
     // make sure invitation exists
-    if (!invitaion) return c.json({ message: 'Inviation not found' }, 404)
+    if (!invitaion)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'Invitation not found',
+            path: 'invitationId',
+          },
+        ]),
+        404
+      )
 
     // accept invitation
     await prisma.invitation.update({
@@ -160,7 +237,16 @@ app.patch('/archive/:invitationId', async (c) => {
 
     return c.json({ success: true })
   } catch (e) {
-    return c.json({ message: 'Internal server error' }, 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -186,6 +272,15 @@ app.delete('/:invitationId', async (c) => {
 
     return c.json({ success: true })
   } catch (e) {
-    return c.json({ message: 'Internal server error' }, 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })

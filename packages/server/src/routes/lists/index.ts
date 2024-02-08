@@ -1,8 +1,10 @@
 import { Hono } from 'hono'
-import { prisma } from '../../db/index'
-import { AuthVariables, authMiddleware } from '../../middleware'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { prisma } from '../../db/index'
+import { AuthVariables, authMiddleware } from '../../middleware'
+import { createErrors } from '../../utils'
+import { ERROR_CODES } from '../../constants'
 
 // TODO handle errors in a formal way
 
@@ -42,11 +44,30 @@ app.get('/:boardId', async (c) => {
         },
       },
     })
-    if (!board) return c.json({ message: 'Board not found' }, 404)
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: `Board not found or user ${decodedJwtPayload?.username} does not have access to this board`,
+            path: 'boardId',
+          },
+        ]),
+        404
+      )
 
     return c.json(board.List, 200)
   } catch (e) {
-    return c.json('internal server error', 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -73,13 +94,32 @@ app.post(
           UserBoards: { some: { id: decodedJwtPayload?.id } },
         },
       })
-      if (!board) return c.json({ message: 'Board not found' }, 404)
+      if (!board)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_FOUND,
+              message: `Board not found or user ${decodedJwtPayload?.username} does not have access to this board`,
+              path: 'boardId',
+            },
+          ]),
+          404
+        )
 
       const newList = await prisma.list.create({ data: { name, boardId } })
 
       return c.json(newList, 201)
     } catch (e) {
-      return c.json('internal server error', 500)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
     }
   }
 )
@@ -99,7 +139,7 @@ app.patch(
       const { name } = c.req.valid('json')
       const { listId } = c.req.param()
 
-      // make sure board exists and user have access to this board
+      // make sure list exists
       const list = await prisma.list.findUnique({
         include: {
           Board: {
@@ -116,13 +156,32 @@ app.patch(
           id: listId,
         },
       })
-      if (!list) return c.json({ message: 'List not found' }, 404)
+      if (!list)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_FOUND,
+              message: 'List not found',
+              path: 'listId',
+            },
+          ]),
+          404
+        )
       if (
         !list.Board.UserBoards.some(
           (userBoard) => userBoard.id === decodedJwtPayload?.id
         )
       ) {
-        return c.json({ message: 'Unauthorized' }, 401)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+              message: 'User does not have access to this list',
+              path: 'listId',
+            },
+          ]),
+          401
+        )
       }
       const updatedListData = await prisma.list.update({
         where: { id: listId },
@@ -152,7 +211,17 @@ app.delete('/:listId', async (c) => {
         },
       },
     })
-    if (!list) return c.json({ message: 'List not found' }, 404)
+    if (!list)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'List not found',
+            path: 'listId',
+          },
+        ]),
+        404
+      )
 
     await prisma.list.delete({
       where: {
@@ -166,6 +235,15 @@ app.delete('/:listId', async (c) => {
 
     return c.json({}, 200)
   } catch (e) {
-    return c.json('internal server error', 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })

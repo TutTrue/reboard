@@ -2,10 +2,11 @@
 
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { HiOutlinePlus } from 'react-icons/hi'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
+import { createBoardAction } from '@/app/lib/serverActions'
 
+import { HiOutlinePlus } from 'react-icons/hi'
 import {
   Dialog,
   DialogContent,
@@ -25,7 +26,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { createBoardAction } from '@/app/lib/serverActions'
 
 const formSchema = z.object({
   name: z
@@ -90,7 +90,7 @@ function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
   )
 }
 
-export function CreateBoardModal() {
+export default function CreateBoardModal() {
   const [isModalActive, setIsModalActive] = useState(false)
 
   function closeModal() {

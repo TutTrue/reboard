@@ -1,8 +1,10 @@
 import { Hono } from 'hono'
-import { prisma } from '../../db/index'
-import { AuthVariables, authMiddleware } from '../../middleware'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { prisma } from '../../db/index'
+import { AuthVariables, authMiddleware } from '../../middleware'
+import { createErrors } from '../../utils'
+import { ERROR_CODES } from '../../constants'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -19,7 +21,17 @@ app.get('/:boardId', async (c) => {
         UserBoards: { some: { id: decodedJwtPayload?.id } },
       },
     })
-    if (!board) return c.json({ message: 'Board not found' }, 404)
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: `Board not found or user ${decodedJwtPayload?.username} does not have access to this board`,
+            path: 'boardId',
+          },
+        ]),
+        404
+      )
     const tasks = await prisma.task.findMany({
       where: {
         boardId,
@@ -27,7 +39,16 @@ app.get('/:boardId', async (c) => {
     })
     return c.json(tasks, 200)
   } catch (e) {
-    return c.json('internal server error', 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -61,11 +82,30 @@ app.post(
           id: listId,
         },
       })
-      if (!list) return c.json({ message: 'List not found' }, 404)
+      if (!list)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_FOUND,
+              message: 'List not found',
+              path: 'listId',
+            },
+          ]),
+          404
+        )
       if (
         !list.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
       )
-        return c.json({ message: 'Unauthorized' }, 401)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+              message: `User ${decodedJwtPayload?.username} is not a member of this board`,
+              path: 'boardId',
+            },
+          ]),
+          401
+        )
       const newList = await prisma.task.create({
         data: {
           text,
@@ -77,7 +117,16 @@ app.post(
       })
       return c.json(newList, 201)
     } catch (e) {
-      return c.json('internal server error', 500)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
     }
   }
 )
@@ -102,11 +151,30 @@ app.delete('/:taskId', async (c) => {
         id: taskId,
       },
     })
-    if (!task) return c.json({ message: 'Task not found' }, 404)
+    if (!task)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'Task not found',
+            path: 'taskId',
+          },
+        ]),
+        404
+      )
     if (
       !task.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
     )
-      return c.json({ message: 'Unauthorized' }, 401)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+            message: `User ${decodedJwtPayload?.username} is not a member of this board`,
+            path: 'boardId',
+          },
+        ]),
+        401
+      )
     await prisma.task.delete({
       where: {
         id: taskId,
@@ -114,7 +182,16 @@ app.delete('/:taskId', async (c) => {
     })
     return c.json({}, 200)
   } catch (e) {
-    return c.json('internal server error', 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -149,11 +226,30 @@ app.patch(
           id: taskId,
         },
       })
-      if (!task) return c.json({ message: 'Task not found' }, 404)
+      if (!task)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_FOUND,
+              message: 'Task not found',
+              path: 'taskId',
+            },
+          ]),
+          404
+        )
       if (
         !task.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
       )
-        return c.json({ message: 'Unauthorized' }, 401)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+              message: `User ${decodedJwtPayload?.username} is not a member of this board`,
+              path: 'boardId',
+            },
+          ]),
+          401
+        )
       const updatedTask = await prisma.task.update({
         where: {
           id: taskId,
@@ -166,7 +262,16 @@ app.patch(
       })
       return c.json(updatedTask, 200)
     } catch (e) {
-      return c.json('internal server error', 500)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
     }
   }
 )

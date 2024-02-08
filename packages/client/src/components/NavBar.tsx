@@ -2,8 +2,8 @@ import { getServerSession } from 'next-auth'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import Container from './Container'
 
+import Container from '@/components/Container'
 import {
   DropdownMenu,
   DropdownMenuContent,
