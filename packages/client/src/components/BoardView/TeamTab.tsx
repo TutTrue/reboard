@@ -11,21 +11,30 @@ interface TeamTabProps {
   board: BoardWithRelations
 }
 
+interface MemberCardProps {
+  user: IUser
+  board: BoardWithRelations
+  authedUser: Session['user']
+}
+
 export default function TeamTab({ board, authedUser }: TeamTabProps) {
-
-
-
   return (
-    <div className="flex flex-col bg-white divide-y">
-      {board.UserBoards.map((user) => (
-        <Member key={user.id} user={user} board={board} authedUser={authedUser} />
-      ))}
+    <div>
+      <div className="flex flex-col bg-white divide-y">
+        {board.UserBoards.map((user) => (
+          <MemberCard
+            key={user.id}
+            user={user}
+            board={board}
+            authedUser={authedUser}
+          />
+        ))}
+      </div>
     </div>
   )
 }
 
-function Member({ user, board, authedUser }: { user: IUser, board: BoardWithRelations, authedUser: Session['user'] }) {
-
+function MemberCard({ user, board, authedUser }: MemberCardProps) {
   async function handleRemoveUser() {
     const res = await removeUserFromBoardAction(board.id, user.username)
 
@@ -37,9 +46,7 @@ function Member({ user, board, authedUser }: { user: IUser, board: BoardWithRela
   }
 
   return (
-    <div
-      className="flex items-center justify-between px-4 py-3"
-    >
+    <div className="flex items-center justify-between px-4 py-3">
       <div className="flex items-center gap-3">
         <Image
           src={user.profilePictureURL || '/images/default-user.png'}
@@ -59,8 +66,12 @@ function Member({ user, board, authedUser }: { user: IUser, board: BoardWithRela
       </div>
 
       {authedUser.username === board.Owner.username &&
-        user.username !== board.Owner.username ? (
-        <Button variant={'destructive'} className="gap-2" onClick={handleRemoveUser}>
+      user.username !== board.Owner.username ? (
+        <Button
+          variant={'destructive'}
+          className="gap-2"
+          onClick={handleRemoveUser}
+        >
           <HiOutlineUserRemove size={18} />
           <span>Kick</span>
         </Button>
