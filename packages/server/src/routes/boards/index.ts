@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import { prisma } from '../../db/index'
-import { type AuthVariables, authMiddleware } from '../../middleware'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { prisma } from '../../db/index'
+import { type AuthVariables, authMiddleware } from '../../middleware'
 import { ERROR_CODES } from '../../constants'
 import { createErrors } from '../../utils'
 
@@ -35,7 +35,16 @@ app.get('/', async (c) => {
 
     return c.json(userBoards?.UserBoards, 200)
   } catch (e) {
-    return c.json({ message: 'Internal server error' }, 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -89,7 +98,17 @@ app.get('/:username/:boardName', async (c) => {
     },
   })
 
-  if (!board) return c.json({ message: 'Board can not be found' }, 404)
+  if (!board)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.NOT_FOUND,
+          message: `board is not found or  user ${decodedJwtPayload?.username} does not have access to the board ${boardName} of user ${username}`,
+          path: ['username', 'boardName'],
+        },
+      ]),
+      404
+    )
 
   return c.json(board)
 })
@@ -151,7 +170,16 @@ app.post(
 
       return c.json(newBoard)
     } catch (e) {
-      return c.json('internal server error', 500)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
     }
   }
 )
@@ -168,7 +196,18 @@ app.delete('/:boardId', async (c) => {
       },
     })
 
-    if (!board) return c.json({ message: 'Board can not be found' }, 404)
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message:
+              'Board not found or user does not have access to the board',
+            path: 'boardId',
+          },
+        ]),
+        404
+      )
 
     await prisma.board.delete({
       where: {
@@ -178,7 +217,16 @@ app.delete('/:boardId', async (c) => {
 
     return c.json({}, 200)
   } catch (e) {
-    return c.json('internal server error', 500)
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
   }
 })
 
@@ -210,9 +258,28 @@ app.patch(
         },
       })
 
-      if (!board) return c.json({ message: 'Board can not be found' }, 404)
+      if (!board)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_FOUND,
+              message: 'Board not found',
+              path: 'boardId',
+            },
+          ]),
+          404
+        )
       if (!board.UserBoards.some((user) => user.username === username))
-        return c.json({ message: 'User not found' }, 404)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+              message: 'User is not a member of the board',
+              path: 'username',
+            },
+          ]),
+          404
+        )
 
       const updatedBoard = await prisma.board.update({
         where: {
@@ -228,7 +295,16 @@ app.patch(
       })
       return c.json(updatedBoard, 200)
     } catch (e) {
-      return c.json('internal server error', 500)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
     }
   }
 )

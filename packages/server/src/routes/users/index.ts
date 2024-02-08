@@ -1,7 +1,9 @@
 import { Hono } from 'hono'
-import { prisma } from '../../db/index'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
+import { prisma } from '../../db/index'
+import { createErrors } from '../../utils'
+import { ERROR_CODES } from '../../constants'
 
 export const app = new Hono()
 
@@ -30,9 +32,13 @@ app.post(
 
       if (getUser) {
         return c.json(
-          {
-            message: 'User already exists',
-          },
+          createErrors([
+            {
+              code: ERROR_CODES.DUBLICATE_ENTRY,
+              message: 'User already exists',
+              path: 'id',
+            },
+          ]),
           409
         )
       }
@@ -50,9 +56,13 @@ app.post(
       return c.json(user, 201)
     } catch (e) {
       return c.json(
-        {
-          message: 'Internal server error',
-        },
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
         500
       )
     }
