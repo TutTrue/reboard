@@ -35,9 +35,6 @@ const formSchema = z.object({
       message: 'name must be at least 2 characters.',
     })
     .max(120, { message: 'name must be at most 120 characters.' })
-    .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
-      message: "Invalid board name, name can't contain spaces",
-    }),
 })
 
 function CreateListForm({ closeModal, boardId }: { closeModal: () => void, boardId: string}) {
@@ -74,7 +71,7 @@ function CreateListForm({ closeModal, boardId }: { closeModal: () => void, board
               <FormControl>
                 <Input
                   className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500"
-                  placeholder="Your new board's name"
+                  placeholder="Create a new list"
                   {...field}
                 />
               </FormControl>
