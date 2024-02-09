@@ -82,6 +82,7 @@ model Action {
   id        String     @id @default(uuid())
   type      ActionType
   userId    String
+  boardId   String
   message   String?
   createdAt DateTime   @default(now())
 
