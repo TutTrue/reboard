@@ -5,6 +5,7 @@ import { getBoard } from '@/app/lib/serverActions'
 import Container from '@/components/Container'
 import CreateListModal from '@/components/CreateListModal'
 import TabBar from '@/components/BoardView/TabBar'
+import InviteUserModal from '@/components/InviteUserModal'
 
 interface BoardViewProps {
   params: {
@@ -24,7 +25,10 @@ export default async function BoardView({ params: { boardName, username } }: Boa
       <div className="flex justify-between items-center gap-2">
         <h2 className="font-bold text-3xl my-10">{response.data.name}</h2>
 
-        <CreateListModal boardId={response.data.id} />
+        <div className='flex items-center gap-3'>
+          <InviteUserModal />
+          <CreateListModal boardId={response.data.id} />
+        </div>
       </div>
 
       <TabBar board={response.data} session={session!} />

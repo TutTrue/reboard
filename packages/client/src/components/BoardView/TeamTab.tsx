@@ -11,27 +11,30 @@ interface TeamTabProps {
   board: BoardWithRelations
 }
 
-export default function TeamTab({ board, authedUser }: TeamTabProps) {
-
-
-
-  return (
-    <div className="flex flex-col bg-white divide-y">
-      {board.UserBoards.map((user) => (
-        <Member key={user.id} user={user} board={board} authedUser={authedUser} />
-      ))}
-    </div>
-  )
-}
-
-interface MemberProps {
+interface MemberCardProps {
   user: IUser
   board: BoardWithRelations
   authedUser: Session['user']
 }
 
-function Member({ user, board, authedUser }: MemberProps) {
+export default function TeamTab({ board, authedUser }: TeamTabProps) {
+  return (
+    <div>
+      <div className="flex flex-col bg-white divide-y">
+        {board.UserBoards.map((user) => (
+          <MemberCard
+            key={user.id}
+            user={user}
+            board={board}
+            authedUser={authedUser}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
+function MemberCard({ user, board, authedUser }: MemberCardProps) {
   async function handleRemoveUser() {
     const res = await removeUserFromBoardAction(board.id, user.username)
 
@@ -43,9 +46,7 @@ function Member({ user, board, authedUser }: MemberProps) {
   }
 
   return (
-    <div
-      className="flex items-center justify-between px-4 py-3"
-    >
+    <div className="flex items-center justify-between px-4 py-3">
       <div className="flex items-center gap-3">
         <Image
           src={user.profilePictureURL || '/images/default-user.png'}
@@ -65,8 +66,12 @@ function Member({ user, board, authedUser }: MemberProps) {
       </div>
 
       {authedUser.username === board.Owner.username &&
-        user.username !== board.Owner.username ? (
-        <Button variant={'destructive'} className="gap-2" onClick={handleRemoveUser}>
+      user.username !== board.Owner.username ? (
+        <Button
+          variant={'destructive'}
+          className="gap-2"
+          onClick={handleRemoveUser}
+        >
           <HiOutlineUserRemove size={18} />
           <span>Kick</span>
         </Button>
@@ -76,3 +81,4 @@ function Member({ user, board, authedUser }: MemberProps) {
     </div>
   )
 }
+
