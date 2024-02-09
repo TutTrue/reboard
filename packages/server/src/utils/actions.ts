@@ -4,11 +4,11 @@ import { AuthVariables } from '../middleware'
 
 export type PayloadTypes = {
   [ActionType.CREATE_TASK]: { text: string }
-  [ActionType.UPDATE_TASK]: { oldText: string, text: string }
+  [ActionType.UPDATE_TASK]: { oldText: string; text: string }
   [ActionType.DELETE_TASK]: { text: string }
   [ActionType.COMPLETE_TASK]: { text: string }
   [ActionType.CREATE_LIST]: { name: string }
-  [ActionType.UPDATE_LIST]: { oldName: string, name: string }
+  [ActionType.UPDATE_LIST]: { oldName: string; name: string }
   [ActionType.DELETE_LIST]: { name: string }
   [ActionType.INVITE_USER]: { invitedUser: { username: string; name: string } }
   [ActionType.ACCEPT_INVITATION]: AuthVariables
@@ -28,9 +28,9 @@ type DefualtPayloadType = {
 export async function createAction<T extends ActionType>(
   type: T,
   decodedJwtPayload: AuthVariables['decodedJwtPayload'],
+  boardId: string,
   payload: T extends keyof PayloadTypes ? PayloadTypes[T] : never
 ) {
-
   const userInfo = `${decodedJwtPayload?.name} @${decodedJwtPayload?.username}`
   const typedPayload = payload as DefualtPayloadType
 
@@ -41,6 +41,7 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} joined the party🥳`,
+          boardId,
         },
       })
 
@@ -53,6 +54,7 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} invited someone to join the party🥵`,
+          boardId,
         },
       })
       break
@@ -64,6 +66,7 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} created a list: "${typedPayload.name}"`,
+          boardId,
         },
       })
 
@@ -76,6 +79,7 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} updated list name: "${typedPayload.oldName}" to "${typedPayload.name}"`,
+          boardId,
         },
       })
 
@@ -88,6 +92,7 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} deleted a list: "${typedPayload.name}"`,
+          boardId,
         },
       })
 
@@ -95,13 +100,15 @@ export async function createAction<T extends ActionType>(
     }
 
     case ActionType.CREATE_TASK: {
-          await prisma.action.create({
-            data: {
-              userId: decodedJwtPayload?.id!,
-              type,
-              message: `${userInfo} created a task: "${typedPayload.name}"`
-            }
-          })
+      await prisma.action.create({
+        data: {
+          userId: decodedJwtPayload?.id!,
+          type,
+          message: `${userInfo} created a task: "${typedPayload.text}"`,
+          boardId,
+        },
+      })
+      break
     }
 
     case ActionType.COMPLETE_TASK: {
@@ -109,28 +116,33 @@ export async function createAction<T extends ActionType>(
         data: {
           userId: decodedJwtPayload?.id!,
           type,
-          message: `${userInfo} completed a task: "${typedPayload.text}"🤩`
-        }
-      })      
+          message: `${userInfo} completed a task: "${typedPayload.text}"🤩`,
+          boardId,
+        },
+      })
+      break
     }
 
     case ActionType.UPDATE_TASK: {
-          await prisma.action.create({
-            data: {
-              userId: decodedJwtPayload?.id!,
-              type,
-              message: `${userInfo} updated task name: "${typedPayload.oldText}" to "${typedPayload.text}"`,
-            }
-          })
+      await prisma.action.create({
+        data: {
+          userId: decodedJwtPayload?.id!,
+          type,
+          message: `${userInfo} updated task name: "${typedPayload.oldText}" to "${typedPayload.text}"`,
+          boardId,
+        },
+      })
+      break
     }
     case ActionType.DELETE_TASK: {
-          await prisma.action.create({
-            data: {
-              userId: decodedJwtPayload?.id!,
-              type,
-              message: `${userInfo} deleted a task: "${typedPayload.text}"`,
-            }
-          })
+      await prisma.action.create({
+        data: {
+          userId: decodedJwtPayload?.id!,
+          type,
+          message: `${userInfo} deleted a task: "${typedPayload.text}"`,
+          boardId,
+        },
+      })
     }
   }
 }

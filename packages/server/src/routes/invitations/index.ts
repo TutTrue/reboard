@@ -3,6 +3,8 @@ import { prisma } from '../../db/index'
 import { AuthVariables, authMiddleware } from '../../middleware'
 import { createErrors } from '../../utils'
 import { ERROR_CODES } from '../../constants'
+import { createAction } from '../../utils/actions'
+import { ActionType } from '@prisma/client'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -119,7 +121,17 @@ app.post('/:username/:boardName', async (c) => {
         toUserId: invitedUser.id,
       },
     })
-
+    createAction(
+      ActionType.INVITE_USER,
+      decodedJwtPayload,
+      newInvitation.boardId,
+      {
+        invitedUser: {
+          username: invitedUser.username,
+          name: invitedUser.fullName,
+        },
+      }
+    )
     return c.json(newInvitation)
   } catch (e) {
     return c.json(
@@ -186,6 +198,14 @@ app.patch('/accept/:invitationId', async (c) => {
       acceptInvitationTransaction,
       updateUserBoardTransaction,
     ])
+    createAction(
+      ActionType.ACCEPT_INVITATION,
+      decodedJwtPayload,
+      invitaion.boardId,
+      {
+        decodedJwtPayload,
+      }
+    )
 
     return c.json({ success: true })
   } catch (e) {

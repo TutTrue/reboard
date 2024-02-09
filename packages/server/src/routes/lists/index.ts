@@ -5,6 +5,8 @@ import { prisma } from '../../db/index'
 import { AuthVariables, authMiddleware } from '../../middleware'
 import { createErrors } from '../../utils'
 import { ERROR_CODES } from '../../constants'
+import { createAction } from '../../utils/actions'
+import { ActionType } from '@prisma/client'
 
 // TODO handle errors in a formal way
 
@@ -107,7 +109,9 @@ app.post(
         )
 
       const newList = await prisma.list.create({ data: { name, boardId } })
-
+      createAction(ActionType.CREATE_LIST, decodedJwtPayload, newList.boardId, {
+        name: newList.name,
+      })
       return c.json(newList, 201)
     } catch (e) {
       return c.json(
@@ -187,10 +191,22 @@ app.patch(
         where: { id: listId },
         data: { name },
       })
-
+      createAction(ActionType.UPDATE_LIST, decodedJwtPayload, list.boardId, {
+        oldName: list.name,
+        name: updatedListData.name,
+      })
       return c.json(updatedListData, 200)
     } catch (e) {
-      return c.json('internal server error', 500)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
     }
   }
 )
@@ -232,7 +248,9 @@ app.delete('/:listId', async (c) => {
         },
       },
     })
-
+    createAction(ActionType.DELETE_LIST, decodedJwtPayload, list.boardId, {
+      name: list.name,
+    })
     return c.json({}, 200)
   } catch (e) {
     return c.json(

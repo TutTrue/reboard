@@ -5,6 +5,8 @@ import { prisma } from '../../db/index'
 import { AuthVariables, authMiddleware } from '../../middleware'
 import { createErrors } from '../../utils'
 import { ERROR_CODES } from '../../constants'
+import { createAction } from '../../utils/actions'
+import { ActionType } from '@prisma/client'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -115,6 +117,9 @@ app.post(
           creatorId: decodedJwtPayload?.id!,
         },
       })
+      createAction(ActionType.CREATE_TASK, decodedJwtPayload, newList.boardId, {
+        text: newList.text,
+      })
       return c.json(newList, 201)
     } catch (e) {
       return c.json(
@@ -179,6 +184,9 @@ app.delete('/:taskId', async (c) => {
       where: {
         id: taskId,
       },
+    })
+    createAction(ActionType.DELETE_TASK, decodedJwtPayload, task.boardId, {
+      text: task.text,
     })
     return c.json({}, 200)
   } catch (e) {
@@ -260,6 +268,20 @@ app.patch(
           label: label ?? task.label,
         },
       })
+      if (text)
+        createAction(ActionType.UPDATE_TASK, decodedJwtPayload, task.boardId, {
+          oldText: task.text,
+          text: updatedTask.text,
+        })
+      else
+        createAction(
+          ActionType.COMPLETE_TASK,
+          decodedJwtPayload,
+          task.boardId,
+          {
+            text: updatedTask.text,
+          }
+        )
       return c.json(updatedTask, 200)
     } catch (e) {
       return c.json(
