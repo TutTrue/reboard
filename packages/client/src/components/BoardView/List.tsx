@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 
-import { ListWithRelations, TaskWithRelations } from '@/types'
+import { IList, ITask } from '@/types'
 import TaskCard from '@/components/BoardView/TaskCard'
 import { Input } from '@/components/ui/input'
 import {
@@ -109,14 +109,14 @@ export default function List({
   list,
   session,
 }: {
-  list: ListWithRelations
+  list: IList
   session: Session
 }) {
   const [editing, setEditing] = useState(false)
   const [optimisticTasks, addTask] = useOptimistic(
     list.Task,
     (tasks, newTaskName) => {
-      const task: TaskWithRelations = {
+      const task: ITask = {
         id: Date.now().toString(),
         text: newTaskName as string,
         boardId: list.boardId,
@@ -127,12 +127,13 @@ export default function List({
           fullName: session?.user?.name || '',
           username: session.user.username,
           profilePictureURL: session?.user.profilePictureURL || '',
+          email: session?.user?.email || '',
         },
         creatorId: session.user.id,
         listId: list.id,
       }
 
-      return [...tasks, task]
+      return [...tasks!, task]
     }
   )
 
@@ -197,7 +198,7 @@ export default function List({
       </div>
 
       <div className="bg-white">
-        {optimisticTasks.map((task) => (
+        {optimisticTasks?.map((task) => (
           <TaskCard key={task.id} task={task} />
         ))}
       </div>

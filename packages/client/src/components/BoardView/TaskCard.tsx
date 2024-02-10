@@ -13,10 +13,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { TaskWithRelations } from '@/types'
+import { ITask } from '@/types'
 import { deleteTask, renameTask } from '@/lib/serverActions/tasks'
 
-function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
+function TaskDropDownMenu({ task }: { task: ITask }) {
   async function handleDelete() {
     const res = await deleteTask(task.id)
 
@@ -50,7 +50,7 @@ function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
   )
 }
 
-export default function TaskCard({ task }: { task: TaskWithRelations }) {
+export default function TaskCard({ task }: { task: ITask }) {
   async function handleToggleComplete() {
     const res = await renameTask(task.id, undefined, undefined, !task.completed)
 
@@ -66,7 +66,7 @@ export default function TaskCard({ task }: { task: TaskWithRelations }) {
     <div className="bg-white px-3 py-2 hover:bg-gray-100 rounded-md flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
         <Image
-          src={task.Creator.profilePictureURL || '/images/default-user.png'}
+          src={task.Creator?.profilePictureURL || '/images/default-user.png'}
           alt="user image"
           width={25}
           height={25}

@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { BoardWithRelations, IList } from '@/types/index'
+import { IBoard, IList } from '@/types/index'
 import BoardOptionDropdownMenu from '@/components/BoardOptionDropdownMenu'
 import {
   Form,
@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input'
 import { updateBoardName } from '@/lib/serverActions/boards'
 
 interface BoardCardProps {
-  board: BoardWithRelations
+  board: IBoard
   session: Session | null
 }
 
@@ -39,7 +39,7 @@ function EditForm({
   board,
   setEditing,
 }: {
-  board: BoardWithRelations
+  board: IBoard
   setEditing: (value: boolean) => void
 }) {
   const formSchema = z.object({
@@ -95,7 +95,7 @@ function EditForm({
 
 export default function BoardCard({ board, session }: BoardCardProps) {
   const completedTaskCount = useMemo(
-    () => board.Task.filter((task) => task.completed).length,
+    () => board.Task?.filter((task) => task.completed).length,
     [board.Task]
   )
 
@@ -113,13 +113,13 @@ export default function BoardCard({ board, session }: BoardCardProps) {
             <EditForm board={board} setEditing={setEditopen} />
           ) : (
             <Link
-              href={`/${board?.Owner.username}/${board.name}`}
+              href={`/${board?.Owner?.username}/${board.name}`}
               className="font-semibold text-xl flex items-center gap-1 group-hover:text-indigo-500"
             >
               <HiOutlinePaperClip size={17} />
               <span>
-                {board.Owner.username != session?.user.username
-                  ? board.Owner.username + '/'
+                {board.Owner?.username != session?.user.username
+                  ? board.Owner?.username + '/'
                   : ''}
                 {board.name}
               </span>
@@ -130,12 +130,12 @@ export default function BoardCard({ board, session }: BoardCardProps) {
               <BoardOptionDropdownMenu
               boardId={board.id}
               openEdit={openEdit}
-              isOwner={board.Owner.username === session?.user.username}
+              isOwner={board.Owner?.username === session?.user.username}
             />
             </div>
         </header>
 
-        {board.Task.length ? (
+        {board.Task?.length ? (
           <div className="py-5">
             <h4>
               Tasks: {completedTaskCount}/{board.Task?.length}
@@ -143,7 +143,7 @@ export default function BoardCard({ board, session }: BoardCardProps) {
             <div className="w-full h-3 mt-3 bg-gray-300 border-2 border-indigo-600 rounded overflow-hidden">
               <span
                 style={{
-                  width: (completedTaskCount / board.Task.length) * 100 + '%',
+                  width: ((completedTaskCount || 0) / board.Task.length) * 100 + '%',
                 }}
                 className={`h-full bg-indigo-400 block`}
               ></span>
@@ -153,7 +153,7 @@ export default function BoardCard({ board, session }: BoardCardProps) {
           ''
         )}
 
-        {board.List.length ? (
+        {board.List?.length ? (
           <div className="py-5 space-y-3">
             <h4>Lists:</h4>
             <div className="flex flex-wrap gap-2">
@@ -168,7 +168,7 @@ export default function BoardCard({ board, session }: BoardCardProps) {
 
         <div className="pt-5">
           <div className="items-center gap-2 inline-flex flex-row-reverse">
-            {board.UserBoards.map((user) => (
+            {board.UserBoards?.map((user) => (
               <Link
                 key={user.id}
                 href={

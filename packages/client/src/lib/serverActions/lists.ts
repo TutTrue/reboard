@@ -1,13 +1,13 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { ListWithRelations, APIRespone } from '@/types'
+import { IList, APIRespone } from '@/types'
 import { fetcher, getToken } from '@/lib/fetcher'
 
 export async function createList(
   name: string,
   boardId: string
-): Promise<APIRespone<ListWithRelations>> {
+): Promise<APIRespone<IList>> {
   try {
     const res = await fetcher.post(
       `/lists/${boardId}`,
@@ -29,7 +29,7 @@ export async function createList(
 export async function updateList(
   ListId: string,
   name: string
-): Promise<APIRespone<ListWithRelations>> {
+): Promise<APIRespone<IList>> {
   try {
     const res = await fetcher.patch(
       `/lists/${ListId}`,
@@ -49,7 +49,7 @@ export async function updateList(
 
 export async function deleteList(
   id: string
-): Promise<APIRespone<ListWithRelations>> {
+): Promise<APIRespone<IList>> {
   try {
     const res = await fetcher.delete(`/lists/${id}`, {
       headers: {

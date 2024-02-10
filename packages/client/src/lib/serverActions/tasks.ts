@@ -1,13 +1,13 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { APIRespone, TaskWithRelations } from '@/types'
+import { APIRespone, ITask } from '@/types'
 import { fetcher, getToken } from '@/lib/fetcher'
 
 export async function createTask(
   listId: string,
   text: string
-): Promise<APIRespone<TaskWithRelations>> {
+): Promise<APIRespone<ITask>> {
   try {
     const res = await fetcher.post(
       `/tasks/${listId}`,
@@ -31,7 +31,7 @@ export async function renameTask(
   text: string | undefined,
   label: string | undefined,
   completed: boolean | undefined
-): Promise<APIRespone<TaskWithRelations>> {
+): Promise<APIRespone<ITask>> {
   try {
     const res = await fetcher.patch(
       `/tasks/${taskId}`,
@@ -52,7 +52,7 @@ export async function renameTask(
 
 export async function deleteTask(
   id: string
-): Promise<APIRespone<TaskWithRelations>> {
+): Promise<APIRespone<ITask>> {
   try {
     const res = await fetcher.delete(`/tasks/${id}`, {
       headers: {

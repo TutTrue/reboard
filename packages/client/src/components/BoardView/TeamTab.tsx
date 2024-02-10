@@ -3,18 +3,18 @@ import Image from 'next/image'
 import toast from 'react-hot-toast'
 import { HiOutlineUserMinus } from 'react-icons/hi2'
 
-import { BoardWithRelations, IUser } from '@/types'
+import { IBoard, IUser } from '@/types'
 import { Button } from '@/components/ui/button'
 import { kickUserFromBoard } from '@/lib/serverActions/invitations'
 
 interface TeamTabProps {
   authedUser: Session['user']
-  board: BoardWithRelations
+  board: IBoard
 }
 
 interface MemberCardProps {
   user: IUser
-  board: BoardWithRelations
+  board: IBoard
   authedUser: Session['user']
 }
 
@@ -22,7 +22,7 @@ export default function TeamTab({ board, authedUser }: TeamTabProps) {
   return (
     <div>
       <div className="flex flex-col bg-white divide-y">
-        {board.UserBoards.map((user) => (
+        {board.UserBoards?.map((user) => (
           <MemberCard
             key={user.id}
             user={user}
@@ -60,13 +60,13 @@ function MemberCard({ user, board, authedUser }: MemberCardProps) {
         <div className="flex flex-col">
           <h3>
             {user.fullName}
-            {board.Owner.username === user.username ? ' 👑' : ''}
+            {board.Owner?.username === user.username ? ' 👑' : ''}
           </h3>
           <p className="text-gray-500 text-sm">@{user.username}</p>
         </div>
       </div>
 
-      {authedUser.username === board.Owner.username &&
+      {authedUser.username === board.Owner?.username &&
       user.username !== board.Owner.username ? (
         <Button
           variant={'destructive'}

@@ -1,10 +1,10 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { BoardWithRelations, APIRespone } from '@/types'
+import { IBoard, APIRespone } from '@/types'
 import { fetcher, getToken } from '@/lib/fetcher'
 
-export async function getBoards(): Promise<APIRespone<BoardWithRelations[]>> {
+export async function getBoards(): Promise<APIRespone<IBoard[]>> {
   try {
     const res = await fetcher.get(`/boards`, {
       headers: {
@@ -21,7 +21,7 @@ export async function getBoards(): Promise<APIRespone<BoardWithRelations[]>> {
 export async function getBoard(
   username: string,
   boardName: string
-): Promise<APIRespone<BoardWithRelations>> {
+): Promise<APIRespone<IBoard>> {
   try {
     const res = await fetcher.get(`/boards/${username}/${boardName}`, {
       headers: {
@@ -39,7 +39,7 @@ export async function getBoard(
 
 export async function createBoard(
   name: string
-): Promise<APIRespone<BoardWithRelations>> {
+): Promise<APIRespone<IBoard>> {
   try {
     const res = await fetcher.post(
       '/boards',
@@ -61,7 +61,7 @@ export async function createBoard(
 
 export async function deleteBoard(
   id: string
-): Promise<BoardWithRelations | null> {
+): Promise<IBoard | null> {
   const res = await fetcher.delete(`/boards/${id}`, {
     headers: {
       Authorization: await getToken(),
@@ -77,7 +77,7 @@ export async function deleteBoard(
 export async function updateBoardName(
   boardId: string,
   name: string
-): Promise<APIRespone<BoardWithRelations>> {
+): Promise<APIRespone<IBoard>> {
   try {
     const res = await fetcher.patch(
       `/boards/edit/${boardId}`,

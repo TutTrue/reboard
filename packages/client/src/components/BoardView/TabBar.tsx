@@ -2,14 +2,14 @@
 
 import { Session } from 'next-auth'
 import { useSearchParams } from 'next/navigation'
-import { BoardWithRelations } from '@/types'
+import { IBoard } from '@/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ListTab from '@/components/BoardView/ListTab'
 import TeamTab from '@/components/BoardView/TeamTab'
 
 interface TabsProps {
   session: Session
-  board: BoardWithRelations
+  board: IBoard
 }
 
 export default function TabBar({ session, board }: TabsProps) {
