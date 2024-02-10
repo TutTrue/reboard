@@ -285,7 +285,17 @@ app.delete('/:invitationId', async (c) => {
     })
 
     // make sure invitation exists
-    if (!invitaion) return c.json({ message: 'Inviation not found' }, 404)
+    if (!invitaion)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'invetation not found',
+            path: 'invitationId',
+          },
+        ]),
+        404
+      )
 
     // delete invitation
     await prisma.invitation.delete({ where: { id: invitationId } })
