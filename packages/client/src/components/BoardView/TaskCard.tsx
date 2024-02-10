@@ -14,11 +14,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { TaskWithRelations } from '@/types'
-import { taskActions } from '@/app/lib/serverActions'
+import { deleteTask, renameTask } from '@/lib/serverActions/tasks'
 
 function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
   async function handleDelete() {
-    const res = await taskActions.deleteTask(task.id)
+    const res = await deleteTask(task.id)
 
     if (!res.success) {
       toast.error('Error deleting task')
@@ -52,12 +52,7 @@ function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
 
 export default function TaskCard({ task }: { task: TaskWithRelations }) {
   async function handleToggleComplete() {
-    const res = await taskActions.renameTask(
-      task.id,
-      undefined,
-      undefined,
-      !task.completed
-    )
+    const res = await renameTask(task.id, undefined, undefined, !task.completed)
 
     if (!res.success) {
       toast.error('Error updating task')

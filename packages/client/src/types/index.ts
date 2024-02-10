@@ -45,7 +45,7 @@ export type BoardWithRelations = IBoard & {
   Owner: IUser
 }
 
-export interface APIError {
+export type APIError = {
   error: {
     issues: {
       code: string
@@ -54,3 +54,7 @@ export interface APIError {
     }[]
   }
 }
+
+export type APIRespone<T> =
+  | { success: false; error: APIError }
+  | { success: true; data: T }

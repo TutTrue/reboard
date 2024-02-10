@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { listActions } from '@/app/lib/serverActions'
+import { createList } from '@/lib/serverActions/lists'
 
 const formSchema = z.object({
   name: z
@@ -45,7 +45,7 @@ function CreateListForm({ closeModal, boardId }: { closeModal: () => void, board
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const res = await listActions.createList(data.name, boardId)
+    const res = await createList(data.name, boardId)
 
     if (!res.success) {
       res.error.error.issues.forEach((error) =>

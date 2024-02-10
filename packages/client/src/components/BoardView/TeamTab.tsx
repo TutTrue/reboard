@@ -5,7 +5,7 @@ import { HiOutlineUserMinus } from 'react-icons/hi2'
 
 import { BoardWithRelations, IUser } from '@/types'
 import { Button } from '@/components/ui/button'
-import { inviationActions } from '@/app/lib/serverActions'
+import { kickUserFromBoard } from '@/lib/serverActions/invitations'
 
 interface TeamTabProps {
   authedUser: Session['user']
@@ -37,7 +37,7 @@ export default function TeamTab({ board, authedUser }: TeamTabProps) {
 
 function MemberCard({ user, board, authedUser }: MemberCardProps) {
   async function handleRemoveUser() {
-    const res = await inviationActions.kickUserFromBoard(board.id, user.username)
+    const res = await kickUserFromBoard(board.id, user.username)
 
     if (!res.success) {
       toast.error('Error removing user')
@@ -82,4 +82,3 @@ function MemberCard({ user, board, authedUser }: MemberCardProps) {
     </div>
   )
 }
-

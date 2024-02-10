@@ -27,7 +27,8 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
-import { taskActions, listActions } from '@/app/lib/serverActions'
+import { createTask } from '@/lib/serverActions/tasks'
+import { deleteList, updateList } from '@/lib/serverActions/lists'
 
 function ListCardDropDownMenu({
   listId,
@@ -37,7 +38,7 @@ function ListCardDropDownMenu({
   setEditing: (editing: boolean) => void
 }) {
   async function handleDelete() {
-    const res = await listActions.deleteList(listId)
+    const res = await deleteList(listId)
     if (res.success) {
       toast.success('List deleted successfully')
       return
@@ -85,7 +86,7 @@ function AddTaskForm({
     const text = formData.get('todo-text') as string
     addTask(text) // optimistic setter
 
-    const res = await taskActions.createTask(listId, text)
+    const res = await createTask(listId, text)
     if (!res.success) {
       toast.error(res.error.error.issues[0].message || 'Failed to add task')
       return
@@ -136,7 +137,7 @@ export default function List({
   )
 
   async function handleListEdit(data: z.infer<typeof formSchema>) {
-    const res = await listActions.updateList(list.id, data.name)
+    const res = await updateList(list.id, data.name)
     setEditing(false)
     if (res.success) {
       toast.success('List updated successfully')

@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { boardsActions } from '@/app/lib/serverActions'
+import { deleteBoard } from '@/lib/serverActions/boards'
 
 export default function BoardOptionDropdownMenu({
   boardId,
@@ -20,7 +20,7 @@ export default function BoardOptionDropdownMenu({
   boardId: string
 }) {
   async function handleDelete() {
-    await boardsActions.deleteBoard(boardId)
+    await deleteBoard(boardId)
   }
   return (
     <DropdownMenu>

@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { boardsActions } from '@/app/lib/serverActions'
+import { createBoard } from '@/lib/serverActions/boards'
 
 const formSchema = z.object({
   name: z
@@ -40,7 +40,6 @@ const formSchema = z.object({
 })
 
 function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +48,7 @@ function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const res = await boardsActions.createBoard(data.name)
+    const res = await createBoard(data.name)
 
     if (!res.success) {
       res.error.error.issues.forEach((error) =>
