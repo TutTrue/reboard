@@ -1,29 +1,32 @@
 import Image from 'next/image'
 import toast from 'react-hot-toast'
-import { TaskWithRelations } from '@/types'
 import {
   HiOutlineCheck,
   HiOutlineEllipsisHorizontal,
   HiOutlinePencil,
   HiOutlineTrash,
 } from 'react-icons/hi2'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { deleteTaskAction, updateTaskAction } from '@/app/lib/serverActions'
+import { TaskWithRelations } from '@/types'
+import { deleteTask, renameTask } from '@/lib/serverActions/tasks'
 
 function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
   async function handleDelete() {
-    const res = await deleteTaskAction(task.id)
+    const res = await deleteTask(task.id)
+
     if (!res.success) {
       toast.error('Error deleting task')
       return
     }
     toast.success('Task deleted successfully')
   }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -48,14 +51,8 @@ function TaskDropDownMenu({ task }: { task: TaskWithRelations }) {
 }
 
 export default function TaskCard({ task }: { task: TaskWithRelations }) {
-
   async function handleToggleComplete() {
-    const res = await updateTaskAction(
-      task.id,
-      undefined,
-      undefined,
-      !task.completed
-    )
+    const res = await renameTask(task.id, undefined, undefined, !task.completed)
 
     if (!res.success) {
       toast.error('Error updating task')
@@ -64,7 +61,7 @@ export default function TaskCard({ task }: { task: TaskWithRelations }) {
 
     toast.success('Task updated successfully')
   }
-  
+
   return (
     <div className="bg-white px-3 py-2 hover:bg-gray-100 rounded-md flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">

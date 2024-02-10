@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
-import { createBoardAction } from '@/app/lib/serverActions'
-
 import { HiOutlinePlus } from 'react-icons/hi'
+
 import {
   Dialog,
   DialogContent,
@@ -26,6 +25,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { createBoard } from '@/lib/serverActions/boards'
 
 const formSchema = z.object({
   name: z
@@ -40,7 +40,6 @@ const formSchema = z.object({
 })
 
 function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +48,7 @@ function CreateBoardForm({ closeModal }: { closeModal: () => void }) {
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const res = await createBoardAction(data.name)
+    const res = await createBoard(data.name)
 
     if (!res.success) {
       res.error.error.issues.forEach((error) =>

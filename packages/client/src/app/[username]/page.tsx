@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { getBoards } from '@/app/lib/serverActions'
+
+import { getBoards } from '@/lib/serverActions/boards'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import Container from '@/components/Container'
 import BoardCard from '@/components/BoardCard'
@@ -12,7 +13,12 @@ export default async function Dashboard({
   params: { username: string }
 }) {
   const session = await getServerSession(options)
-  const boards = await getBoards()
+  const response = await getBoards()
+
+  // TODO handle unsuccefull requests
+  if(!response.success)
+    redirect(`https://github.com/${username}`)
+
 
   if (username !== session?.user.username)
     redirect(`https://github.com/${username}`)
@@ -28,7 +34,7 @@ export default async function Dashboard({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {boards?.map((board) => (
+        {response.data?.map((board) => (
           <BoardCard key={board.id} board={board} session={session} />
         ))}
       </div>
