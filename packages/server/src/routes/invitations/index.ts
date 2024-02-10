@@ -19,16 +19,12 @@ app.get('/', async (c) => {
       where: {
         fromUserId: decodedJwtPayload?.id,
         accepted: false,
-      },
-      select: {
-        id: true,
-        Board: true,
-        boardId: true,
+      },      
+      include: {
         ToUser: true,
-        toUserId: true,
-        fromUserId: true,
-        createdAt: true,
-      },
+        FromUser: true,
+        Board: true
+      }
     })
 
     const receivedInvitations = await prisma.invitation.findMany({
@@ -36,6 +32,11 @@ app.get('/', async (c) => {
         toUserId: decodedJwtPayload?.id,
         accepted: false,
       },
+      include: {
+        ToUser: true,
+        FromUser: true,
+        Board: true
+      }
     })
 
     return c.json({
