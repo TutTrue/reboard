@@ -28,7 +28,7 @@ export async function kickUserFromBoard(
 }
 
 export async function getInvitations(): Promise<
-  APIRespone<{ send: IInvitation[]; received: IInvitation[] }>
+  APIRespone<{ sent: IInvitation[]; received: IInvitation[] }>
 > {
   try {
     const res = await fetcher.get('/invitations', {
@@ -37,7 +37,7 @@ export async function getInvitations(): Promise<
       },
     })
 
-    revalidatePath('/InvitationView')
+    revalidatePath('/InvitationsView')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
@@ -58,6 +58,8 @@ export async function inviteUser(
         },
       }
     )
+
+    revalidatePath('/NavBar')
 
     return { success: true, data: res.data }
   } catch (e: any) {
