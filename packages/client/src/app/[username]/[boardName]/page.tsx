@@ -14,7 +14,9 @@ interface BoardViewProps {
   }
 }
 
-export default async function BoardView({ params: { boardName, username } }: BoardViewProps) {
+export default async function BoardView({
+  params: { boardName, username },
+}: BoardViewProps) {
   const session = await getServerSession(options)
   const response = await getBoard(username as string, boardName)
 
@@ -25,8 +27,12 @@ export default async function BoardView({ params: { boardName, username } }: Boa
       <div className="flex justify-between items-center gap-2">
         <h2 className="font-bold text-3xl my-10">{response.data.name}</h2>
 
-        <div className='flex items-center gap-3'>
-          <InviteUserModal />
+        <div className="flex items-center gap-3">
+          {session?.user.username === response.data.Owner?.username ? (
+            <InviteUserModal boardName={response.data.name} />
+          ) : (
+            ''
+          )}
           <CreateListModal boardId={response.data.id} />
         </div>
       </div>
