@@ -4,8 +4,8 @@ import {
   HiOutlineEllipsisHorizontal,
   HiOutlinePencil,
   HiOutlineTrash,
+  HiOutlineUserMinus
 } from 'react-icons/hi2'
-
 
 import {
   DropdownMenu,
@@ -15,7 +15,17 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { deleteBoard } from '@/lib/serverActions/boards'
 
-export default function BoardOptionDropdownMenu({ boardId, openEdit }: { boardId: string, openEdit: () => void }) {
+interface BoardOptionDropdownMenuProps {
+  boardId: string
+  isOwner: boolean
+  openEdit: () => void
+}
+
+export default function BoardOptionDropdownMenu({
+  boardId,
+  isOwner,
+  openEdit,
+}: BoardOptionDropdownMenuProps) {
   async function handleDelete() {
     await deleteBoard(boardId)
   }
@@ -30,17 +40,29 @@ export default function BoardOptionDropdownMenu({ boardId, openEdit }: { boardId
         <HiOutlineEllipsisHorizontal size={27} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="text-gray-500">
-        <DropdownMenuItem className="flex items-center gap-2" onClick={handleEdit}>
-          <HiOutlinePencil size={18} />
-          <span>Edit</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex items-center gap-2"
-          onClick={handleDelete}
-        >
-          <HiOutlineTrash size={18} />
-          <span>Delete</span>
-        </DropdownMenuItem>
+        {isOwner ? (
+          <>
+            <DropdownMenuItem
+              className="flex items-center gap-2"
+              onClick={handleEdit}
+            >
+              <HiOutlinePencil size={18} />
+              <span>Edit</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="flex items-center gap-2"
+              onClick={handleDelete}
+            >
+              <HiOutlineTrash size={18} />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem className="flex items-center gap-2">
+            <HiOutlineUserMinus size={18} />
+            <span>Leave board</span>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )
