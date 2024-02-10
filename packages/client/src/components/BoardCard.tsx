@@ -127,7 +127,11 @@ export default function BoardCard({ board, session }: BoardCardProps) {
           )}
 
             <div className="text-gray-500 flex-shrink-0">
-              <BoardOptionDropdownMenu boardId={board.id} openEdit={openEdit} isOwner={session?.user.username === board.Owner.username} />
+              <BoardOptionDropdownMenu
+              boardId={board.id}
+              openEdit={openEdit} isOwner={session?.user.username === board.Owner.username}
+              isOwner={board.Owner.username === session?.user.username}
+            />
             </div>
         </header>
 
