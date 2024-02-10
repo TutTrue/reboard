@@ -31,16 +31,19 @@ app.post(
       })
 
       if (getUser) {
-        return c.json(
-          createErrors([
-            {
-              code: ERROR_CODES.DUBLICATE_ENTRY,
-              message: 'User already exists',
-              path: 'id',
-            },
-          ]),
-          409
-        )
+        const user = await prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            fullName,
+            username,
+            email,
+            profilePictureURL,
+          },
+        })
+
+        return c.json(user, 200)
       }
 
       const user = await prisma.user.create({

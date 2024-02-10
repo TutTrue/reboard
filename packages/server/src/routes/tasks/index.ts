@@ -273,15 +273,28 @@ app.patch(
           oldText: task.text,
           text: updatedTask.text,
         })
-      else
-        createAction(
-          ActionType.COMPLETE_TASK,
-          decodedJwtPayload,
-          task.boardId,
-          {
-            text: updatedTask.text,
-          }
-        )
+      else {
+        if (completed) {
+          createAction(
+            ActionType.COMPLETE_TASK,
+            decodedJwtPayload,
+            task.boardId,
+            {
+              text: updatedTask.text,
+            }
+          )
+        } else {
+          createAction(
+            ActionType.UNCHECK_TASK,
+            decodedJwtPayload,
+            task.boardId,
+            {
+              text: updatedTask.text,
+            }
+          )
+        }
+
+      }
       return c.json(updatedTask, 200)
     } catch (e) {
       return c.json(

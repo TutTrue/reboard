@@ -12,6 +12,8 @@ export type PayloadTypes = {
   [ActionType.DELETE_LIST]: { name: string }
   [ActionType.INVITE_USER]: { invitedUser: { username: string; name: string } }
   [ActionType.ACCEPT_INVITATION]: AuthVariables
+  [ActionType.UPDATE_BOARD_NAME]: { oldName: string; name: string }
+  [ActionType.UNCHECK_TASK]: { text: string }
 }
 
 type DefualtPayloadType = {
@@ -143,6 +145,29 @@ export async function createAction<T extends ActionType>(
           boardId,
         },
       })
+      break
+    }
+    case ActionType.UPDATE_BOARD_NAME: {
+      await prisma.action.create({
+        data: {
+          userId: decodedJwtPayload?.id!,
+          type,
+          message: `${userInfo} updated board name: "${typedPayload.oldName}" to "${typedPayload.name}"`,
+          boardId
+        }
+      })
+      break
+    }
+    case ActionType.UNCHECK_TASK: {
+      await prisma.action.create({
+        data: {
+          userId: decodedJwtPayload?.id!,
+          type,
+          message: `${userInfo} unchecked a task: "${typedPayload.text}"`,
+          boardId
+        }
+      })
+      break
     }
   }
 }
