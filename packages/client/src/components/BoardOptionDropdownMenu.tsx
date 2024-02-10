@@ -15,10 +15,16 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi2'
 
-export default function BoardOptionDropdownMenu({ boardId }: { boardId: string }) {
+export default function BoardOptionDropdownMenu({ boardId, openEdit }: { boardId: string, openEdit: () => void }) {
+
   async function handleDelete() {
     await deleteBoardAction(boardId)
   }
+
+  async function handleEdit() {
+    openEdit()
+  }
+
   return (
     <>
       <DropdownMenu>
@@ -26,7 +32,7 @@ export default function BoardOptionDropdownMenu({ boardId }: { boardId: string }
           <HiOutlineEllipsisHorizontal size={27} />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="text-gray-500">
-          <DropdownMenuItem className="flex items-center gap-2">
+          <DropdownMenuItem className="flex items-center gap-2" onClick={handleEdit}>
             <HiOutlinePencil size={18} />
             <span>Edit</span>
           </DropdownMenuItem>

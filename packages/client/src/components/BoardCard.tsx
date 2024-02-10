@@ -3,10 +3,23 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Session } from 'next-auth'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { updateBoardNameAction } from '@/app/lib/serverActions'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { BoardWithRelations, IList } from '@/types/index'
 import { HiOutlinePaperClip } from 'react-icons/hi2'
 import BoardOptionDropdownMenu from '@/components/BoardOptionDropdownMenu'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 
 interface BoardCardProps {
   board: BoardWithRelations
@@ -27,25 +40,33 @@ export default function BoardCard({ board, session }: BoardCardProps) {
     [board.Task]
   )
 
+  const [editOpen, setEditopen] = useState(false)
+
+  function openEdit() {
+    setEditopen(true)
+  }
+
   return (
     <main>
       <div className="group border-2 shadow-md p-5 rounded-2xl hover:border-indigo-500 hover:shadow-indigo-500 bg-white divide-y hover:divide-y hover:divide-indigo-500 transition-all duration-300">
         <header className="flex items-center justify-between pb-5">
-          <Link
-            href={`/${board?.Owner.username}/${board.name}`}
-            className="font-semibold text-xl flex items-center gap-1 group-hover:text-indigo-500"
-          >
-            <HiOutlinePaperClip size={17} />
-            <span>
-              {board.Owner.username != session?.user.username
-                ? board.Owner.username + '/'
-                : ''}
-              {board.name}
-            </span>
-          </Link>
+          {editOpen ? (<EditForm board={board} setEditing={setEditopen} />) : (
+            <Link
+              href={`/${board?.Owner.username}/${board.name}`}
+              className="font-semibold text-xl flex items-center gap-1 group-hover:text-indigo-500"
+            >
+              <HiOutlinePaperClip size={17} />
+              <span>
+                {board.Owner.username != session?.user.username
+                  ? board.Owner.username + '/'
+                  : ''}
+                {board.name}
+              </span>
+            </Link>)
+          }
 
           <div className="text-gray-500 flex-shrink-0">
-            <BoardOptionDropdownMenu boardId={board.id} />
+            <BoardOptionDropdownMenu boardId={board.id} openEdit={openEdit} />
           </div>
         </header>
 
@@ -105,5 +126,61 @@ export default function BoardCard({ board, session }: BoardCardProps) {
         </div>
       </div>
     </main>
+  )
+}
+
+function EditForm({ board, setEditing }: { board: BoardWithRelations, setEditing: (value: boolean) => void }) {
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(2, {
+        message: 'name must be at least 2 characters.',
+      })
+      .max(255, { message: 'name must be at most 120 characters.' })
+      .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
+        message: "Invalid board name, name can't contain spaces",
+      }),
+  })
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: board.name,
+    },
+  })
+
+  async function handleBoardEdit(data: z.infer<typeof formSchema>) {
+    const res = await updateBoardNameAction(board.id, data.name)
+    setEditing(false)
+    if (res.success) {
+      toast.success('board updated successfully')
+      return
+    }
+    toast.error(res.error.error.issues[0].message || 'Failed to update board')
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        className="space-y-8"
+        onSubmit={form.handleSubmit(handleBoardEdit)}
+      >
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
   )
 }

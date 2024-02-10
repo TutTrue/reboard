@@ -44,7 +44,7 @@ export async function getBoard(
 }
 
 export async function createBoardAction(
-  name: string,
+  name: string
 ): Promise<APIRespone<BoardWithRelations>> {
   try {
     const res = await fetcher.post(
@@ -217,8 +217,30 @@ export async function removeUserFromBoardAction(
         },
       }
     )
-    
+
     revalidatePath('/TeamTab')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function updateBoardNameAction(
+  boardId: string,
+  name: string
+): Promise<APIRespone<BoardWithRelations>> {
+  try {
+    const res = await fetcher.patch(
+      `/boards/edit/${boardId}`,
+      { name },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
+    revalidatePath('/Dashboard')
     return { success: true, data: res.data }
   } catch (e: any) {
     return { success: false, error: e.response.data }
