@@ -1,13 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { createListAction } from '@/app/lib/serverActions'
-
 import { zodResolver } from '@hookform/resolvers/zod'
-import { HiOutlinePlus } from 'react-icons/hi'
+
+import { HiOutlinePlus } from 'react-icons/hi2'
 import {
   Dialog,
   DialogContent,
@@ -16,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-
 import {
   Form,
   FormControl,
@@ -27,6 +25,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { listActions } from '@/app/lib/serverActions'
 
 const formSchema = z.object({
   name: z
@@ -46,7 +45,7 @@ function CreateListForm({ closeModal, boardId }: { closeModal: () => void, board
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const res = await createListAction(data.name, boardId)
+    const res = await listActions.createList(data.name, boardId)
 
     if (!res.success) {
       res.error.error.issues.forEach((error) =>

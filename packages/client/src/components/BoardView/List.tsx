@@ -5,8 +5,8 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
-import { ListWithRelations, TaskWithRelations } from '@/types'
 
+import { ListWithRelations, TaskWithRelations } from '@/types'
 import TaskCard from '@/components/BoardView/TaskCard'
 import { Input } from '@/components/ui/input'
 import {
@@ -20,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
 import {
   Form,
   FormControl,
@@ -28,12 +27,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  createTaskAction,
-  deleteListAction,
-  updateListAction,
-} from '@/app/lib/serverActions'
-
+import { taskActions, listActions } from '@/app/lib/serverActions'
 
 function ListCardDropDownMenu({
   listId,
@@ -43,7 +37,7 @@ function ListCardDropDownMenu({
   setEditing: (editing: boolean) => void
 }) {
   async function handleDelete() {
-    const res = await deleteListAction(listId)
+    const res = await listActions.deleteList(listId)
     if (res.success) {
       toast.success('List deleted successfully')
       return
@@ -91,7 +85,7 @@ function AddTaskForm({
     const text = formData.get('todo-text') as string
     addTask(text) // optimistic setter
 
-    const res = await createTaskAction(listId, text)
+    const res = await taskActions.createTask(listId, text)
     if (!res.success) {
       toast.error(res.error.error.issues[0].message || 'Failed to add task')
       return
@@ -142,7 +136,7 @@ export default function List({
   )
 
   async function handleListEdit(data: z.infer<typeof formSchema>) {
-    const res = await updateListAction(list.id, data.name)
+    const res = await listActions.updateList(list.id, data.name)
     setEditing(false)
     if (res.success) {
       toast.success('List updated successfully')

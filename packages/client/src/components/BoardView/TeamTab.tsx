@@ -1,10 +1,11 @@
 import { Session } from 'next-auth'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
+import { HiOutlineUserMinus } from 'react-icons/hi2'
+
 import { BoardWithRelations, IUser } from '@/types'
-import { HiOutlineUserRemove } from 'react-icons/hi'
 import { Button } from '@/components/ui/button'
-import { removeUserFromBoardAction } from '@/app/lib/serverActions'
+import { inviationActions } from '@/app/lib/serverActions'
 
 interface TeamTabProps {
   authedUser: Session['user']
@@ -36,7 +37,7 @@ export default function TeamTab({ board, authedUser }: TeamTabProps) {
 
 function MemberCard({ user, board, authedUser }: MemberCardProps) {
   async function handleRemoveUser() {
-    const res = await removeUserFromBoardAction(board.id, user.username)
+    const res = await inviationActions.kickUserFromBoard(board.id, user.username)
 
     if (!res.success) {
       toast.error('Error removing user')
@@ -72,7 +73,7 @@ function MemberCard({ user, board, authedUser }: MemberCardProps) {
           className="gap-2"
           onClick={handleRemoveUser}
         >
-          <HiOutlineUserRemove size={18} />
+          <HiOutlineUserMinus size={18} />
           <span>Kick</span>
         </Button>
       ) : (

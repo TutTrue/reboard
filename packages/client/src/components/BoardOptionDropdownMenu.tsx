@@ -1,6 +1,10 @@
 'use client'
 
-import { deleteBoardAction } from '@/app/lib/serverActions'
+import {
+  HiOutlineEllipsisHorizontal,
+  HiOutlinePencil,
+  HiOutlineTrash,
+} from 'react-icons/hi2'
 
 import {
   DropdownMenu,
@@ -8,35 +12,35 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { boardsActions } from '@/app/lib/serverActions'
 
-import {
-  HiOutlineEllipsisHorizontal,
-  HiOutlinePencil,
-  HiOutlineTrash,
-} from 'react-icons/hi2'
-
-export default function BoardOptionDropdownMenu({ boardId }: { boardId: string }) {
+export default function BoardOptionDropdownMenu({
+  boardId,
+}: {
+  boardId: string
+}) {
   async function handleDelete() {
-    await deleteBoardAction(boardId)
+    await boardsActions.deleteBoard(boardId)
   }
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <HiOutlineEllipsisHorizontal size={27} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="text-gray-500">
-          <DropdownMenuItem className="flex items-center gap-2">
-            <HiOutlinePencil size={18} />
-            <span>Edit</span>
-          </DropdownMenuItem>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <HiOutlineEllipsisHorizontal size={27} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="text-gray-500">
+        <DropdownMenuItem className="flex items-center gap-2">
+          <HiOutlinePencil size={18} />
+          <span>Edit</span>
+        </DropdownMenuItem>
 
-          <DropdownMenuItem className="flex items-center gap-2" onClick={handleDelete}>
-            <HiOutlineTrash size={18} />
-            <span>Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+        <DropdownMenuItem
+          className="flex items-center gap-2"
+          onClick={handleDelete}
+        >
+          <HiOutlineTrash size={18} />
+          <span>Delete</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

@@ -1,6 +1,6 @@
 import { getServerSession } from 'next-auth'
 import { redirect } from 'next/navigation'
-import { getBoards } from '@/app/lib/serverActions'
+import { boardsActions } from '@/app/lib/serverActions'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import Container from '@/components/Container'
 import BoardCard from '@/components/BoardCard'
@@ -12,7 +12,7 @@ export default async function Dashboard({
   params: { username: string }
 }) {
   const session = await getServerSession(options)
-  const boards = await getBoards()
+  const boards = await boardsActions.getBoards()
 
   if (username !== session?.user.username)
     redirect(`https://github.com/${username}`)
