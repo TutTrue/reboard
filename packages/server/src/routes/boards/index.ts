@@ -5,6 +5,8 @@ import { prisma } from '../../db/index'
 import { type AuthVariables, authMiddleware } from '../../middleware'
 import { ERROR_CODES } from '../../constants'
 import { createErrors } from '../../utils'
+import { createAction } from '../../utils/actions'
+import { ActionType } from '@prisma/client'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -357,6 +359,10 @@ app.patch(
         data: {
           name,
         },
+      })
+      createAction(ActionType.UPDATE_BOARD_NAME, decodedJwtPayload, board.id, {
+        oldName: board.name,
+        name: updatedBoard.name,
       })
       return c.json(updatedBoard, 200)
     } catch (e) {
