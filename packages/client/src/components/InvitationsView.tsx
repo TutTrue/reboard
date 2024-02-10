@@ -201,7 +201,7 @@ export default function InvitationsView({ invitations }: InvitationsViewProps) {
         )}
       </SheetTrigger>
       <SheetContent className="overflow-y-auto w-full sm:w-[400px]">
-        <SheetTitle className="text-xl">Inviations</SheetTitle>
+        <SheetTitle className="text-xl">Invitations</SheetTitle>
         <TabBar invitations={invitations} />
       </SheetContent>
     </Sheet>
