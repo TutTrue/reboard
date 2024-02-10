@@ -73,3 +73,25 @@ export async function deleteBoard(
 
   return res.data
 }
+
+export async function updateBoardName(
+  boardId: string,
+  name: string
+): Promise<APIRespone<BoardWithRelations>> {
+  try {
+    const res = await fetcher.patch(
+      `/boards/edit/${boardId}`,
+      { name },
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
+    revalidatePath('/Dashboard')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}

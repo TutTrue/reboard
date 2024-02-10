@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { updateBoardNameAction } from '@/app/lib/serverActions'
+import { updateBoardName } from '@/lib/serverActions/boards'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { BoardWithRelations, IList } from '@/types/index'
 import { HiOutlinePaperClip } from 'react-icons/hi2'
@@ -150,7 +150,7 @@ function EditForm({ board, setEditing }: { board: BoardWithRelations, setEditing
   })
 
   async function handleBoardEdit(data: z.infer<typeof formSchema>) {
-    const res = await updateBoardNameAction(board.id, data.name)
+    const res = await updateBoardName(board.id, data.name)
     setEditing(false)
     if (res.success) {
       toast.success('board updated successfully')
