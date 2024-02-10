@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { HiOutlineUserPlus } from 'react-icons/hi2'
+import { inviteUser } from '@/lib/serverActions/invitations'
 
 const formSchema = z.object({
   username: z
@@ -35,12 +36,18 @@ const formSchema = z.object({
       message: 'name must be at least 2 characters.',
     })
     .max(120, { message: 'name must be at most 120 characters.' })
-    .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
+    .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/, {
       message: "Invalid board name, name can't contain spaces",
     }),
 })
 
-function InviteUserForm({ closeModal }: { closeModal: () => void }) {
+function InviteUserForm({
+  boardName,
+  closeModal,
+}: {
+  boardName: string
+  closeModal: () => void
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,6 +56,16 @@ function InviteUserForm({ closeModal }: { closeModal: () => void }) {
   })
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    const res = await inviteUser(data.username, boardName)
+
+    if (!res.success) {
+      res.error.error.issues.forEach((error) =>
+        form.setError('username', { message: error.message })
+      )
+      return
+    }
+
+    toast.success('User invited successfully')
     closeModal()
   }
 
@@ -60,7 +77,7 @@ function InviteUserForm({ closeModal }: { closeModal: () => void }) {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='capitalize'>{field.name}</FormLabel>
+              <FormLabel className="capitalize">{field.name}</FormLabel>
               <FormControl>
                 <Input
                   className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500"
@@ -80,7 +97,7 @@ function InviteUserForm({ closeModal }: { closeModal: () => void }) {
   )
 }
 
-export default function InviteUserModal() {
+export default function InviteUserModal({ boardName }: { boardName: string }) {
   const [isModalActive, setIsModalActive] = useState(false)
 
   function closeModal() {
@@ -101,7 +118,7 @@ export default function InviteUserModal() {
           </DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <InviteUserForm closeModal={closeModal} />
+          <InviteUserForm boardName={boardName} closeModal={closeModal} />
         </DialogDescription>
       </DialogContent>
     </Dialog>
