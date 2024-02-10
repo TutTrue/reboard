@@ -17,8 +17,8 @@ import { deleteBoard } from '@/lib/serverActions/boards'
 
 interface BoardOptionDropdownMenuProps {
   boardId: string
-  openEdit: () => void
   isOwner: boolean
+  openEdit: () => void
 }
 export default function BoardOptionDropdownMenu({ boardId, isOwner, openEdit }: BoardOptionDropdownMenuProps) {
   async function handleDelete() {
@@ -34,10 +34,10 @@ export default function BoardOptionDropdownMenu({ boardId, isOwner, openEdit }: 
       <DropdownMenuTrigger>
         <HiOutlineEllipsisHorizontal size={27} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="text-gray-500">
-        {
-          isOwner ? (
-            <>
+      {
+        isOwner ? (
+          <>
+            <DropdownMenuContent className="text-gray-500">
               <DropdownMenuItem className="flex items-center gap-2" onClick={handleEdit}>
                 <HiOutlinePencil size={18} />
                 <span>Edit</span>
@@ -49,15 +49,17 @@ export default function BoardOptionDropdownMenu({ boardId, isOwner, openEdit }: 
                 <HiOutlineTrash size={18} />
                 <span>Delete</span>
               </DropdownMenuItem>
-            </>
-          ) : (
-            <DropdownMenuItem className="flex items-center gap-2">
+            </DropdownMenuContent>
+          </>
+        ) : (
+          <DropdownMenuContent className="bg-red-600 text-white hover:bg-red-400">
+            <DropdownMenuItem className="flex items-center gap-2 focus:bg-red-400 focus:text-white">
               <ImExit size={18} />
               <span>Leave</span>
             </DropdownMenuItem>
-          )
-        }
-      </DropdownMenuContent>
+          </DropdownMenuContent>
+        )
+      }
     </DropdownMenu>
   )
 }
