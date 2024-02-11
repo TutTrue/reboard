@@ -19,12 +19,12 @@ app.get('/', async (c) => {
       where: {
         fromUserId: decodedJwtPayload?.id,
         accepted: false,
-      },      
+      },
       include: {
         ToUser: true,
         FromUser: true,
-        Board: true
-      }
+        Board: true,
+      },
     })
 
     const receivedInvitations = await prisma.invitation.findMany({
@@ -35,8 +35,8 @@ app.get('/', async (c) => {
       include: {
         ToUser: true,
         FromUser: true,
-        Board: true
-      }
+        Board: true,
+      },
     })
 
     return c.json({
@@ -94,6 +94,36 @@ app.post('/:username/:boardName', async (c) => {
         ]),
         404
       )
+    // make sure user is not already a member of the board
+    const userBoard = await prisma.board.findFirst({
+      include: {
+        UserBoards: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      where: {
+        id: board.id,
+        UserBoards: {
+          some: {
+            username: invitedUser.username,
+          },
+        },
+      },
+    })
+    if (userBoard) {
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.DUBLICATE_ENTRY,
+            message: `User ${invitedUser.username} is already a member of the board`,
+            path: 'username',
+          },
+        ]),
+        401
+      )
+    }
 
     // make sure user is not already invited
     const oldInvitaion = await prisma.invitation.findFirst({
@@ -101,6 +131,7 @@ app.post('/:username/:boardName', async (c) => {
         boardId: board.id,
         fromUserId: decodedJwtPayload?.id,
         toUserId: invitedUser.id,
+        accepted: false,
       },
     })
     if (oldInvitaion)
