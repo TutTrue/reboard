@@ -11,16 +11,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { HiOutlineLogout, HiOutlineSun, HiOutlineUsers } from 'react-icons/hi'
-import InvitationsView from './InvitationsView'
+import { HiOutlineLogout, HiOutlineSun } from 'react-icons/hi'
+import InvitationsView from '@/components/InvitationsView'
 import { getInvitations } from '@/lib/serverActions/invitations'
 
 export default async function NavBar() {
   const session = await getServerSession()
   const response = await getInvitations()
 
-  if(!response.success)
-    return ''
 
   return (
     <nav className="bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white h-[80px]">
@@ -34,8 +32,10 @@ export default async function NavBar() {
         {/* TODO add profile dropdown menu */}
         {session ? (
           <div className="flex items-center gap-4">
-            <InvitationsView invitations={response.data} />
-
+            {
+              response.success &&
+              <InvitationsView invitations={response.data} />
+            }
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Image
