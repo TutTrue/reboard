@@ -1,39 +1,53 @@
-import { APIError, IInvitation } from '@/types'
+'use client'
 
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
+import { useMemo, useOptimistic } from 'react'
+import Image from 'next/image'
 import {
   HiOutlineArchiveBox,
   HiOutlineCheck,
   HiOutlineTrash,
   HiOutlineUsers,
 } from 'react-icons/hi2'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import Image from 'next/image'
-import { Button } from './ui/button'
-import { useMemo } from 'react'
 
-// TODO add optimistic ui updates in:
-// [ ] deleting an invitation
-// [ ] accepting an invitation
-// [ ] archiving an invitation
+import { IInvitation } from '@/types'
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from './ui/button'
+import {
+  acceptInvitation,
+  archiveInvitation,
+  deleteInvitation,
+} from '@/lib/serverActions/invitations'
+import toast from 'react-hot-toast'
 
 interface InvitationsViewProps {
   invitations: { sent: IInvitation[]; received: IInvitation[] }
 }
 
-function SentInvitationsTab({
-  sentInvitations: sent,
-}: {
+interface SentInvitationsTabProps {
   sentInvitations: IInvitation[]
-}) {
+  handleDeleteInvitation: (id: string) => void
+}
+
+interface ReceivedInvitationsTab {
+  archived?: boolean
+  receivedInvitations: IInvitation[]
+  handleAcceptInvitation: (id: string) => void
+  handleArchiveInvitation: (id: string) => void
+}
+
+function SentInvitationsTab({
+  sentInvitations,
+  handleDeleteInvitation,
+}: SentInvitationsTabProps) {
   return (
     <div className="divide-y">
-      {sent.map((invitation) => (
+      {sentInvitations.map((invitation) => (
         <div
           key={invitation.id}
           className="flex items-center justify-between gap-3 py-3"
@@ -61,7 +75,10 @@ function SentInvitationsTab({
             </div>
           </div>
 
-          <Button variant={'destructive'}>
+          <Button
+            variant={'destructive'}
+            onClick={() => handleDeleteInvitation(invitation.id)}
+          >
             <HiOutlineTrash size={19} />
           </Button>
         </div>
@@ -71,12 +88,11 @@ function SentInvitationsTab({
 }
 
 function ReceivedInvitationsTab({
-  receivedInvitations,
   archived,
-}: {
-  receivedInvitations: IInvitation[]
-  archived?: boolean
-}) {
+  receivedInvitations,
+  handleAcceptInvitation,
+  handleArchiveInvitation,
+}: ReceivedInvitationsTab) {
   return (
     <div className="divide-y">
       {receivedInvitations.map((invitation) => (
@@ -111,11 +127,14 @@ function ReceivedInvitationsTab({
             {archived ? (
               ''
             ) : (
-              <Button>
+              <Button onClick={() => handleArchiveInvitation(invitation.id)}>
                 <HiOutlineArchiveBox size={19} />
               </Button>
             )}
-            <Button className="bg-green-500 hover:bg-green-600">
+            <Button
+              className="bg-green-500 hover:bg-green-600"
+              onClick={() => handleAcceptInvitation(invitation.id)}
+            >
               <HiOutlineCheck size={19} />
             </Button>
           </div>
@@ -130,10 +149,52 @@ function TabBar({
 }: {
   invitations: InvitationsViewProps['invitations']
 }) {
+  const [optimisticInvitations, manipulateInvitations] = useOptimistic(
+    invitations,
+    (
+      oldState,
+      payload: { id: string; type: 'DELETE' | 'ACCEPT' | 'ARCHIVE' }
+    ) => {
+      const { id, type } = payload
+
+      if (type === 'ACCEPT') {
+        oldState.received = oldState.received.filter((inv) => inv.id !== id)
+      } else if (type === 'DELETE') {
+        oldState.sent = oldState.sent.filter((inv) => inv.id !== id)
+      } else {
+        const invitationIndex = oldState.received.findIndex(
+          (inv) => inv.id === id
+        )
+        oldState.received[invitationIndex].archived = true
+      }
+
+      return oldState
+    }
+  )
+
   const archivedReceivedInvitations = useMemo(
-    () => invitations.received.filter((inv) => inv.archived),
+    () => optimisticInvitations.received.filter((inv) => inv.archived),
     [invitations.received]
   )
+
+  async function handleAcceptInvitation(id: string) {
+    console.log(id)
+    manipulateInvitations({ id, type: 'ACCEPT' })
+    await acceptInvitation(id)
+    toast.success('Invitation accepted succesfully')
+  }
+
+  async function handleArhciveInvitation(id: string) {
+    manipulateInvitations({ id, type: 'ARCHIVE' })
+    await archiveInvitation(id)
+    toast.success('Invitation archived succesfully')
+  }
+
+  async function handleDeleteInvitation(id: string) {
+    manipulateInvitations({ id, type: 'DELETE' })
+    await deleteInvitation(id)
+    toast.success('Invitation deleted succesfully')
+  }
 
   return (
     <Tabs defaultValue="received" className="w-full mt-5">
@@ -147,7 +208,10 @@ function TabBar({
       </TabsList>
 
       <TabsContent value="sent">
-        <SentInvitationsTab sentInvitations={invitations.sent} />
+        <SentInvitationsTab
+          sentInvitations={invitations.sent}
+          handleDeleteInvitation={handleDeleteInvitation}
+        />
         {invitations.sent.length === 0 && (
           <p className="text-gray-500">Couldn't find any sent invitations...</p>
         )}
@@ -157,6 +221,8 @@ function TabBar({
         <div>
           <h3 className="font-semibold">Active invitations</h3>
           <ReceivedInvitationsTab
+            handleAcceptInvitation={handleAcceptInvitation}
+            handleArchiveInvitation={handleArhciveInvitation}
             receivedInvitations={invitations.received.filter(
               (inv) => !inv.archived
             )}
@@ -171,6 +237,8 @@ function TabBar({
           <h3 className="font-semibold">Archived invitations</h3>
           <ReceivedInvitationsTab
             archived
+            handleAcceptInvitation={handleAcceptInvitation}
+            handleArchiveInvitation={handleArhciveInvitation}
             receivedInvitations={archivedReceivedInvitations}
           />
           {archivedReceivedInvitations.length === 0 && (
