@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import { HiOutlineLogout, HiOutlineSun } from 'react-icons/hi'
 
 import Container from '@/components/Container'
 import {
@@ -11,8 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { HiOutlineLogout, HiOutlineSun } from 'react-icons/hi'
-import InvitationsView from '@/components/InvitationsView'
+import InvitationsView from '@/components/InvitationsView/InvitationsView'
 import { getInvitations } from '@/lib/serverActions/invitations'
 
 export default async function NavBar() {
