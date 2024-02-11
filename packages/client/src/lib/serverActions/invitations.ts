@@ -82,6 +82,7 @@ export async function acceptInvitation(
     )
 
     revalidatePath('/NavBar')
+    revalidatePath('/Dashboard')
 
     return { success: true, data: res.data }
   } catch (e: any) {
