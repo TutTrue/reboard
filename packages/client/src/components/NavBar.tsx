@@ -13,16 +13,16 @@ import {
 } from '@/components/ui/dropdown-menu'
 import InvitationsView from '@/components/InvitationsView/InvitationsView'
 import { getInvitations } from '@/lib/serverActions/invitations'
+import { options } from '@/app/api/auth/[...nextauth]/options'
 
 export default async function NavBar() {
-  const session = await getServerSession()
+  const session = await getServerSession(options)
   const response = await getInvitations()
-
 
   return (
     <nav className="bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white h-[80px]">
       <Container className="flex items-center justify-between w-full h-full">
-        <Link href="/">
+        <Link href={session ? '/' + session.user.username : '/'}>
           <span className="text-2xl font-semibold whitespace-nowrap">
             REBOARD
           </span>
@@ -31,10 +31,9 @@ export default async function NavBar() {
         {/* TODO add profile dropdown menu */}
         {session ? (
           <div className="flex items-center gap-4">
-            {
-              response.success &&
+            {response.success && (
               <InvitationsView invitations={response.data} />
-            }
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Image
