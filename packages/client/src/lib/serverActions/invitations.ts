@@ -59,6 +59,68 @@ export async function inviteUser(
       }
     )
 
+    revalidatePath('/InvitationsView')
+
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function acceptInvitation(
+  invitationId: string
+): Promise<APIRespone<{ success: true }>> {
+  try {
+    const res = await fetcher.patch(
+      `/invitations/accept/${invitationId}`,
+      {},
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
+    revalidatePath('/NavBar')
+
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function archiveInvitation(
+  invitationId: string
+): Promise<APIRespone<{ success: true }>> {
+  try {
+    const res = await fetcher.patch(
+      `/invitations/archive/${invitationId}`,
+      {},
+      {
+        headers: {
+          Authorization: await getToken(),
+        },
+      }
+    )
+
+    revalidatePath('/NavBar')
+
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
+}
+
+export async function deleteInvitation(
+  invitationId: string
+): Promise<APIRespone<{ success: true }>> {
+  try {
+    const res = await fetcher.delete(`/invitations/${invitationId}`, {
+      headers: {
+        Authorization: await getToken(),
+      },
+    })
+
     revalidatePath('/NavBar')
 
     return { success: true, data: res.data }
