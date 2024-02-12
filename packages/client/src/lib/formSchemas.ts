@@ -20,3 +20,15 @@ export const boardFormSchema = z.object({
       message: "Invalid board name, name can't contain spaces",
     }),
 })
+
+export const inviteUserFromSchema = z.object({
+  username: z
+    .string()
+    .min(2, {
+      message: 'name must be at least 2 characters.',
+    })
+    .max(120, { message: 'name must be at most 120 characters.' })
+    .regex(/^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$/, {
+      message: "Invalid board name, name can't contain spaces",
+    }),
+})
