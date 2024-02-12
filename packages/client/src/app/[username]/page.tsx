@@ -5,7 +5,7 @@ import { getBoards } from '@/lib/serverActions/boards'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import Container from '@/components/Container'
 import BoardCard from '@/components/BoardCard/BoardCard'
-import CreateBoardModal from '@/components/CreateBoardModal'
+import CreateBoardModal from '@/components/CreateBoardModal/CreateBoardModal'
 
 export default async function Dashboard({
   params: { username },
@@ -16,9 +16,7 @@ export default async function Dashboard({
   const response = await getBoards()
 
   // TODO handle unsuccefull requests
-  if(!response.success)
-    redirect(`https://github.com/${username}`)
-
+  if (!response.success) redirect(`https://github.com/${username}`)
 
   if (username !== session?.user.username)
     redirect(`https://github.com/${username}`)
