@@ -4,6 +4,7 @@ import { app as boardRouter } from './boards'
 import { app as invitationsRouter } from './invitations'
 import { app as listsRouter } from './lists'
 import { app as tasksRouter } from './tasks'
+import { app as actionsRouter } from './actions'
 
 export const app = new Hono()
 
@@ -12,3 +13,4 @@ app.route('/boards', boardRouter)
 app.route('/invitations', invitationsRouter)
 app.route('/lists', listsRouter)
 app.route('/tasks', tasksRouter)
+app.route('/actions', actionsRouter)
