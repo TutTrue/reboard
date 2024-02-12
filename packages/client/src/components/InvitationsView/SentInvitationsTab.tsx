@@ -6,12 +6,12 @@ import { Button } from '../ui/button'
 
 interface SentInvitationsTabProps {
   sentInvitations: IInvitation[]
-  handleDeleteInvitation: (id: string) => void
+  handleInvitation: ({ id, type }: { id: string; type: 'DELETE' | 'ACCEPT' | 'ARCHIVE' }) => void
 }
 
 export default function SentInvitationsTab({
   sentInvitations,
-  handleDeleteInvitation,
+  handleInvitation,
 }: SentInvitationsTabProps) {
   return (
     <div className="divide-y">
@@ -45,7 +45,7 @@ export default function SentInvitationsTab({
 
           <Button
             variant={'destructive'}
-            onClick={() => handleDeleteInvitation(invitation.id)}
+            onClick={() => handleInvitation({ id: invitation.id, type: 'DELETE' })}
           >
             <HiOutlineTrash size={19} />
           </Button>

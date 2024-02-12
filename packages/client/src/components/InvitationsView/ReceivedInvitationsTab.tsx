@@ -6,15 +6,13 @@ import { Button } from '../ui/button'
 interface ReceivedInvitationsTabProps {
   archived?: boolean
   receivedInvitations: IInvitation[]
-  handleAcceptInvitation: (id: string) => void
-  handleArchiveInvitation: (id: string) => void
+  handleInvitation: ({ id, type }: { id: string; type: 'DELETE' | 'ACCEPT' | 'ARCHIVE' }) => void
 }
 
 export default function ReceivedInvitationsTab({
   archived,
   receivedInvitations,
-  handleAcceptInvitation,
-  handleArchiveInvitation,
+  handleInvitation,
 }: ReceivedInvitationsTabProps) {
   return (
     <div className="divide-y">
@@ -50,13 +48,13 @@ export default function ReceivedInvitationsTab({
             {archived ? (
               ''
             ) : (
-              <Button onClick={() => handleArchiveInvitation(invitation.id)}>
+              <Button onClick={() => handleInvitation({ id: invitation.id, type: 'ARCHIVE' })}>
                 <HiOutlineArchiveBox size={19} />
               </Button>
             )}
             <Button
               className="bg-green-500 hover:bg-green-600"
-              onClick={() => handleAcceptInvitation(invitation.id)}
+              onClick={() => handleInvitation({ id: invitation.id, type: 'ACCEPT' })}
             >
               <HiOutlineCheck size={19} />
             </Button>

@@ -45,34 +45,20 @@ export default function InvitationsViewTabBar({
     [optimisticInvitations.received]
   )
 
-  async function handleAcceptInvitation(id: string) {
-    manipulateInvitations({ id, type: 'ACCEPT' })
-    const res = await acceptInvitation(id)
+  async function handleInvitation(payload: { id: string; type: 'DELETE' | 'ACCEPT' | 'ARCHIVE' }) {
+    const actions = {
+      DELETE: deleteInvitation,
+      ACCEPT: acceptInvitation,
+      ARCHIVE: archiveInvitation
+    }
+    const { id, type } = payload
+    manipulateInvitations(payload)
+    const res = await actions[type](id)
     if (!res.success) {
-      toast.error(res.error.error.issues[0].message || 'Failed to accept invitation')
+      toast.error(res.error.error.issues[0].message || `Failed to ${type.toLowerCase()} invitation`)
       return
     }
-    toast.success('Invitation accepted succesfully')
-  }
-
-  async function handleArhciveInvitation(id: string) {
-    manipulateInvitations({ id, type: 'ARCHIVE' })
-    const res = await archiveInvitation(id)
-    if (!res.success) {
-      toast.error(res.error.error.issues[0].message || 'Failed to archive invitation')
-      return
-    }
-    toast.success('Invitation archived succesfully')
-  }
-
-  async function handleDeleteInvitation(id: string) {
-    manipulateInvitations({ id, type: 'DELETE' })
-    const res = await deleteInvitation(id)
-    if (!res.success) {
-      toast.error(res.error.error.issues[0].message || 'Failed to delete invitation')
-      return
-    }
-    toast.success('Invitation deleted succesfully')
+    toast.success(`Invitation ${type.toLowerCase()}${type === 'ACCEPT' ? 'e' : ''}d succesfully`)
   }
 
   return (
@@ -89,7 +75,7 @@ export default function InvitationsViewTabBar({
       <TabsContent value="sent">
         <SentInvitationsTab
           sentInvitations={optimisticInvitations.sent}
-          handleDeleteInvitation={handleDeleteInvitation}
+          handleInvitation={handleInvitation}
         />
         {invitations.sent.length === 0 && (
           <p className="text-gray-500">Couldn't find any sent invitations...</p>
@@ -100,8 +86,7 @@ export default function InvitationsViewTabBar({
         <div>
           <h3 className="font-semibold">Active invitations</h3>
           <ReceivedInvitationsTab
-            handleAcceptInvitation={handleAcceptInvitation}
-            handleArchiveInvitation={handleArhciveInvitation}
+            handleInvitation={handleInvitation}
             receivedInvitations={optimisticInvitations.received.filter(
               (inv) => !inv.archived
             )}
@@ -116,8 +101,7 @@ export default function InvitationsViewTabBar({
           <h3 className="font-semibold">Archived invitations</h3>
           <ReceivedInvitationsTab
             archived
-            handleAcceptInvitation={handleAcceptInvitation}
-            handleArchiveInvitation={handleArhciveInvitation}
+            handleInvitation={handleInvitation}
             receivedInvitations={archivedReceivedInvitations}
           />
           {archivedReceivedInvitations.length === 0 && (
