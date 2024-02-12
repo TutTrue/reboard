@@ -10,7 +10,7 @@ export interface IUser {
   InvitationFromUser?: IUser[]
   InvitationToUser?: IUser[]
   Task?: ITask[]
-  Action?: Action[]
+  Action?: IAction[]
 }
 
 export interface ITask {
@@ -48,6 +48,7 @@ export interface IBoard {
   List?: IList[]
   Task?: ITask[]
   Invitation?: IInvitation[]
+  Action?: IAction[]
 }
 
 export interface IInvitation {
@@ -64,7 +65,7 @@ export interface IInvitation {
   Board?: IBoard
 }
 
-export interface Action {
+export interface IAction {
   id: string
   type:
     | 'CREATE_TASK'

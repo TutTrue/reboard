@@ -37,6 +37,7 @@ model Board {
   List       List[]
   Task       Task[]
   Invitation Invitation[]
+  Action     Action[]
 }
 
 model Invitation {
@@ -86,7 +87,8 @@ model Action {
   message   String?
   createdAt DateTime   @default(now())
 
-  User User @relation(fields: [userId], references: [id])
+  User  User  @relation(fields: [userId], references: [id])
+  Board Board @relation(fields: [boardId], references: [id])
 }
 
 enum ActionType {
