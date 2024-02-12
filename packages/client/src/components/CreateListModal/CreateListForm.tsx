@@ -1,20 +1,8 @@
-'use client'
-
-import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { HiOutlinePlus } from 'react-icons/hi2'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -26,25 +14,22 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { createList } from '@/lib/serverActions/lists'
+import { listFormSchema } from '@/lib/formSchemas'
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: 'name must be at least 2 characters.',
-    })
-    .max(120, { message: 'name must be at most 120 characters.' })
-})
+interface CreateListFormProps {
+  boardId: string
+  closeModal: () => void
+}
 
-function CreateListForm({ closeModal, boardId }: { closeModal: () => void, boardId: string}) {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export default function CreateListForm({ closeModal, boardId }: CreateListFormProps) {
+  const form = useForm<z.infer<typeof listFormSchema>>({
+    resolver: zodResolver(listFormSchema),
     defaultValues: {
       name: '',
     },
   })
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof listFormSchema>) {
     const res = await createList(data.name, boardId)
 
     if (!res.success) {
@@ -83,34 +68,5 @@ function CreateListForm({ closeModal, boardId }: { closeModal: () => void, board
         </Button>
       </form>
     </Form>
-  )
-}
-
-export default function CreateListModal({boardId}: {boardId: string}) {
-  const [isModalActive, setIsModalActive] = useState(false)
-
-  function closeModal() {
-    setIsModalActive(false)
-  }
-
-  return (
-    <Dialog open={isModalActive} onOpenChange={setIsModalActive}>
-      <DialogTrigger asChild>
-        <Button className="bg-indigo-500 hover:bg-indigo-600 gap-1">
-          <HiOutlinePlus size={17} />
-          <span>Add list</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle asChild>
-            <h2 className="mb-5">Add a list</h2>
-          </DialogTitle>
-        </DialogHeader>
-        <DialogDescription>
-          <CreateListForm closeModal={closeModal} boardId={boardId} />
-        </DialogDescription>
-      </DialogContent>
-    </Dialog>
   )
 }

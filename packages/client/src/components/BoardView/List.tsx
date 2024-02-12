@@ -10,7 +10,7 @@ import TaskCard from '@/components/BoardView/TaskCard'
 import { updateList } from '@/lib/serverActions/lists'
 import ListCardDropDownMenu from './ListComponents/ListCardDropDownMenu'
 import AddTaskForm from './ListComponents/AddTaskForm'
-import { editListFormSchema } from '@/lib/formSchemas'
+import { listFormSchema } from '@/lib/formSchemas'
 import EditListForm from './ListComponents/EditListForn'
 
 interface ListProps {
@@ -45,7 +45,7 @@ export default function List({ list, session }: ListProps) {
     }
   )
 
-  async function handleListEdit(data: z.infer<typeof editListFormSchema>) {
+  async function handleListEdit(data: z.infer<typeof listFormSchema>) {
     const res = await updateList(list.id, data.name)
     setEditing(false)
     if (!res.success) {

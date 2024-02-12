@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import { getBoard } from '@/lib/serverActions/boards'
 import Container from '@/components/Container'
-import CreateListModal from '@/components/CreateListModal'
+import CreateListModal from '@/components/CreateListModal/CreateListModal'
 import TabBar from '@/components/BoardView/TabBar'
 import InviteUserModal from '@/components/InviteUserModal'
 

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const editListFormSchema = z.object({
+export const listFormSchema = z.object({
   name: z
     .string()
     .min(2, {

@@ -10,17 +10,17 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { editListFormSchema } from '@/lib/formSchemas'
+import { listFormSchema } from '@/lib/formSchemas'
 import { IList } from '@/types'
 
 interface EditListForm {
   list: IList
-  handleListEdit: (data: z.infer<typeof editListFormSchema>) => void
+  handleListEdit: (data: z.infer<typeof listFormSchema>) => void
 }
 
 export default function EditListForm({ list, handleListEdit }: EditListForm) {
-  const form = useForm<z.infer<typeof editListFormSchema>>({
-    resolver: zodResolver(editListFormSchema),
+  const form = useForm<z.infer<typeof listFormSchema>>({
+    resolver: zodResolver(listFormSchema),
     defaultValues: {
       name: list.name,
     },
