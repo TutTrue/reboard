@@ -6,7 +6,7 @@ import { z } from 'zod'
 import toast from 'react-hot-toast'
 
 import { IList, ITask } from '@/types'
-import TaskCard from '@/components/BoardView/TaskCard'
+import TaskCard from '@/components/BoardView/TaskCard/TaskCard'
 import { updateList } from '@/lib/serverActions/lists'
 import ListCardDropDownMenu from './ListComponents/ListCardDropDownMenu'
 import AddTaskForm from './ListComponents/AddTaskForm'
