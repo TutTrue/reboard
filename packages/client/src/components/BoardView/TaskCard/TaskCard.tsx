@@ -1,24 +1,21 @@
 import Image from 'next/image'
-import toast from 'react-hot-toast'
 
 import { HiOutlineCheck } from 'react-icons/hi2'
 
 import { ITask } from '@/types'
-import { renameTask } from '@/lib/serverActions/tasks'
 import TaskDropDownMenu from './TaskDropdownMenu'
 
-export default function TaskCard({ task }: { task: ITask }) {
-  async function handleToggleComplete() {
-    const res = await renameTask(task.id, undefined, undefined, !task.completed)
+interface TaskCardProps {
+  task: ITask
+  handleToggle: (id: string, completed: boolean) => void
+  handleDelete: (id: string) => void
+}
 
-    if (!res.success) {
-      toast.error('Error updating task')
-      return
-    }
-
-    toast.success('Task updated successfully')
-  }
-
+export default function TaskCard({
+  task,
+  handleToggle,
+  handleDelete,
+}: TaskCardProps) {
   return (
     <div className="bg-white px-3 py-2 hover:bg-gray-100 rounded-md flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
@@ -33,7 +30,7 @@ export default function TaskCard({ task }: { task: ITask }) {
           className={`w-5 h-5 rounded text-sm text-white flex items-center justify-center ${
             task.completed ? 'bg-indigo-500' : 'bg-gray-300'
           }`}
-          onClick={handleToggleComplete}
+          onClick={() => handleToggle(task.id, task.completed)}
         >
           {task.completed ? <HiOutlineCheck size={18} /> : ''}
         </button>
@@ -42,7 +39,7 @@ export default function TaskCard({ task }: { task: ITask }) {
         </span>
       </div>
 
-      <TaskDropDownMenu task={task} />
+      <TaskDropDownMenu task={task} handleDelete={handleDelete} />
     </div>
   )
 }

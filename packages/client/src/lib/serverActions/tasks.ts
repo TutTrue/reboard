@@ -26,7 +26,7 @@ export async function createTask(
   }
 }
 
-export async function renameTask(
+export async function updateTask(
   taskId: string,
   text: string | undefined,
   label: string | undefined,

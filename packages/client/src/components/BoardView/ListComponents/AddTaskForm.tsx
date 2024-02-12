@@ -6,27 +6,19 @@ import { Input } from '@/components/ui/input'
 
 interface AddTaskFormProps {
   listId: string
-  addTask: (action: unknown) => void
+  handleAddTask: (text: string) => void
 }
 
 export default function AddTaskForm({
   listId,
-  addTask,
+  handleAddTask,
 }: AddTaskFormProps) {
   const ref = useRef<HTMLFormElement>(null)
 
   async function handleSubmit(formData: FormData) {
     ref.current?.reset()
-
     const text = formData.get('todo-text') as string
-    addTask(text)
-
-    const res = await createTask(listId, text)
-    if (!res.success) {
-      toast.error(res.error.error.issues[0].message || 'Failed to add task')
-      return
-    }
-    toast.success('Task added successfully')
+    handleAddTask(text)
   }
 
   return (

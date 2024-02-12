@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast'
 import {
   HiOutlineEllipsisHorizontal,
   HiOutlinePencil,
@@ -12,19 +11,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ITask } from '@/types'
-import { deleteTask } from '@/lib/serverActions/tasks'
 
-export default function TaskDropDownMenu({ task }: { task: ITask }) {
-  async function handleDelete() {
-    const res = await deleteTask(task.id)
+interface TaskDropDownMenuProps {
+  task: ITask
+  handleDelete: (id: string) => void
+}
 
-    if (!res.success) {
-      toast.error('Error deleting task')
-      return
-    }
-    toast.success('Task deleted successfully')
-  }
-
+export default function TaskDropDownMenu({
+  task,
+  handleDelete,
+}: TaskDropDownMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -38,7 +34,7 @@ export default function TaskDropDownMenu({ task }: { task: ITask }) {
 
         <DropdownMenuItem
           className="flex items-center gap-2"
-          onClick={handleDelete}
+          onClick={() => handleDelete(task.id)}
         >
           <HiOutlineTrash size={18} />
           <span>Delete</span>

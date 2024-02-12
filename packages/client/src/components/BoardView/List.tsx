@@ -12,38 +12,79 @@ import ListCardDropDownMenu from './ListComponents/ListCardDropDownMenu'
 import AddTaskForm from './ListComponents/AddTaskForm'
 import { listFormSchema } from '@/lib/formSchemas'
 import EditListForm from './ListComponents/EditListForn'
+import { createTask, deleteTask, updateTask } from '@/lib/serverActions/tasks'
 
 interface ListProps {
   list: IList
   session: Session
 }
 
-export default function List({ list, session }: ListProps) {
-  const [editing, setEditing] = useState(false)
+enum TaskActionTypes {
+  ADD_TASK,
+  TOGGLE_TASK,
+  EDIT_TASK_TEXT,
+  DELETE_TASK,
+}
 
-  const [optimisticTasks, addTask] = useOptimistic(
-    list.Task,
-    (tasks, newTaskName) => {
+interface TaskReducerPayload {
+  type: TaskActionTypes
+  payload: {
+    id?: string
+    text?: string
+    boardId?: string
+    listId?: string
+    session?: Session
+  }
+}
+
+function taskReducer(oldState: ITask[], action: TaskReducerPayload): ITask[] {
+  const { type, payload } = action
+
+  switch (type) {
+    case TaskActionTypes.ADD_TASK: {
       const task: ITask = {
         id: Date.now().toString(),
-        text: newTaskName as string,
-        boardId: list.boardId,
+        text: payload.text!,
+        boardId: payload.boardId!,
         completed: false,
         createdAt: new Date(),
         Creator: {
-          id: session.user.id,
-          fullName: session?.user?.name || '',
-          username: session.user.username,
-          profilePictureURL: session?.user.profilePictureURL || '',
-          email: session?.user?.email || '',
+          id: payload.session!.user.id,
+          fullName: payload.session!.user?.name || '',
+          username: payload.session!.user.username,
+          profilePictureURL: payload?.session?.user.profilePictureURL || '',
+          email: payload.session?.user?.email || '',
         },
-        creatorId: session.user.id,
-        listId: list.id,
+        creatorId: payload.session!.user.id,
+        listId: payload.listId!,
       }
 
-      return [...tasks!, task]
+      return [...oldState, task]
     }
-  )
+
+    case TaskActionTypes.TOGGLE_TASK: {
+      console.log('Optimistic update is working')
+      return oldState.map((task) =>
+        task.id === payload.id ? { ...task, completed: !task.completed } : task
+      )
+    }
+
+    case TaskActionTypes.EDIT_TASK_TEXT: {
+      return oldState.map((task) =>
+        task.id === payload.id ? { ...task, text: payload.text! } : task
+      )
+    }
+
+    case TaskActionTypes.DELETE_TASK: {
+      return oldState.filter((task) => task.id !== payload.id)
+    }
+  }
+}
+
+export default function List({ list, session }: ListProps) {
+  const [editing, setEditing] = useState(false)
+
+  const [optimisticTasks, dispathTask] = useOptimistic(list.Task!, taskReducer)
 
   async function handleListEdit(data: z.infer<typeof listFormSchema>) {
     const res = await updateList(list.id, data.name)
@@ -53,6 +94,36 @@ export default function List({ list, session }: ListProps) {
       return
     }
     toast.success('List updated successfully')
+  }
+
+  async function handleAddTask(text: string) {
+    dispathTask({
+      type: TaskActionTypes.ADD_TASK,
+      payload: { boardId: list.boardId, listId: list.id, text, session },
+    })
+    const res = await createTask(list.id, text)
+    if (!res.success) {
+      toast.error(res.error.error.issues[0].message || 'Failed to add task')
+      return
+    }
+  }
+
+  async function handleToggle(id: string, completed: boolean) {
+    dispathTask({ type: TaskActionTypes.TOGGLE_TASK, payload: { id } })
+    const res = await updateTask(id, undefined, undefined, !completed)
+    if (!res.success) {
+      toast.error('Error updating task')
+      return
+    }
+  }
+
+  async function handleDelete(id: string) {
+    dispathTask({ type: TaskActionTypes.DELETE_TASK, payload: { id } })
+    const res = await deleteTask(id)
+    if (!res.success) {
+      toast.error('Error deleting task')
+      return
+    }
   }
 
   return (
@@ -70,11 +141,16 @@ export default function List({ list, session }: ListProps) {
 
       <div className="bg-white">
         {optimisticTasks?.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard
+            key={task.id}
+            handleDelete={handleDelete}
+            handleToggle={handleToggle}
+            task={task}
+          />
         ))}
       </div>
 
-      <AddTaskForm addTask={addTask} listId={list.id} />
+      <AddTaskForm handleAddTask={handleAddTask} listId={list.id} />
     </div>
   )
 }
