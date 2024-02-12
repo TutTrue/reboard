@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { getBoards } from '@/lib/serverActions/boards'
 import { options } from '@/app/api/auth/[...nextauth]/options'
 import Container from '@/components/Container'
-import BoardCard from '@/components/BoardCard'
+import BoardCard from '@/components/BoardCard/BoardCard'
 import CreateBoardModal from '@/components/CreateBoardModal'
 
 export default async function Dashboard({

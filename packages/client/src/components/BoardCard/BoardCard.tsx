@@ -5,22 +5,10 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { Session } from 'next-auth'
 import { HiOutlinePaperClip } from 'react-icons/hi2'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import { zodResolver } from '@hookform/resolvers/zod'
 
 import { IBoard, IList } from '@/types/index'
-import BoardOptionDropdownMenu from '@/components/BoardOptionDropdownMenu'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { updateBoardName } from '@/lib/serverActions/boards'
+import BoardOptionDropdownMenu from '@/components/BoardCard/BoardOptionDropdownMenu'
+import EditBoardNameForm from './EditBoardNameForm'
 
 interface BoardCardProps {
   board: IBoard
@@ -32,64 +20,6 @@ function ListCard({ list }: { list: IList }) {
     <div className="border p-2 rounded-md text-sm text-gray-500">
       {list.name}
     </div>
-  )
-}
-
-function EditForm({
-  board,
-  setEditing,
-}: {
-  board: IBoard
-  setEditing: (value: boolean) => void
-}) {
-  const formSchema = z.object({
-    name: z
-      .string()
-      .min(2, {
-        message: 'name must be at least 2 characters.',
-      })
-      .max(255, { message: 'name must be at most 120 characters.' })
-      .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
-        message: "Invalid board name, name can't contain spaces",
-      }),
-  })
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: board.name,
-    },
-  })
-
-  async function handleBoardEdit(data: z.infer<typeof formSchema>) {
-    const res = await updateBoardName(board.id, data.name)
-    setEditing(false)
-    if (res.success) {
-      toast.success('board updated successfully')
-      return
-    }
-    toast.error(res.error.error.issues[0].message || 'Failed to update board')
-  }
-
-  return (
-    <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(handleBoardEdit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  className="focus:outline-indigo-500 focus:border-indigo-500 focus:ring-indigo-500"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </form>
-    </Form>
   )
 }
 
@@ -108,9 +38,9 @@ export default function BoardCard({ board, session }: BoardCardProps) {
   return (
     <main>
       <div className="group border-2 shadow-md p-5 rounded-2xl hover:border-indigo-500 hover:shadow-indigo-500 bg-white divide-y hover:divide-y hover:divide-indigo-500 transition-all duration-300">
-        <header className="flex items-center justify-between pb-5">
+        <header className="flex items-center justify-between pb-2">
           {editOpen ? (
-            <EditForm board={board} setEditing={setEditopen} />
+            <EditBoardNameForm board={board} setEditing={setEditopen} />
           ) : (
             <Link
               href={`/${board?.Owner?.username}/${board.name}`}
@@ -126,13 +56,13 @@ export default function BoardCard({ board, session }: BoardCardProps) {
             </Link>
           )}
 
-            <div className="text-gray-500 flex-shrink-0">
-              <BoardOptionDropdownMenu
+          <div className="text-gray-500 flex-shrink-0">
+            <BoardOptionDropdownMenu
               boardId={board.id}
               openEdit={openEdit}
               isOwner={board.Owner?.username === session?.user.username}
             />
-            </div>
+          </div>
         </header>
 
         {board.Task?.length ? (
@@ -143,7 +73,8 @@ export default function BoardCard({ board, session }: BoardCardProps) {
             <div className="w-full h-3 mt-3 bg-gray-300 border-2 border-indigo-600 rounded overflow-hidden">
               <span
                 style={{
-                  width: ((completedTaskCount || 0) / board.Task.length) * 100 + '%',
+                  width:
+                    ((completedTaskCount || 0) / board.Task.length) * 100 + '%',
                 }}
                 className={`h-full bg-indigo-400 block`}
               ></span>
