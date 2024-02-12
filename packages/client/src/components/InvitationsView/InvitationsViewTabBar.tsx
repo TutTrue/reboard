@@ -25,43 +25,53 @@ export default function InvitationsViewTabBar({
       payload: { id: string; type: 'DELETE' | 'ACCEPT' | 'ARCHIVE' }
     ) => {
       const { id, type } = payload
-
       if (type === 'ACCEPT') {
-        oldState.received = oldState.received.filter((inv) => inv.id !== id)
+        return { ...oldState, received: oldState.received.filter((inv) => inv.id !== id) }
       } else if (type === 'DELETE') {
-        oldState.sent = oldState.sent.filter((inv) => inv.id !== id)
+        return { ...oldState, sent: oldState.sent.filter((inv) => inv.id !== id) }
       } else {
         const invitationIndex = oldState.received.findIndex(
           (inv) => inv.id === id
         )
-        oldState.received[invitationIndex].archived = true
+        const newReceived = [...oldState.received]
+        newReceived[invitationIndex] = { ...newReceived[invitationIndex], archived: true }
+        return { ...oldState, received: newReceived }
       }
-
-      return oldState
     }
   )
 
   const archivedReceivedInvitations = useMemo(
     () => optimisticInvitations.received.filter((inv) => inv.archived),
-    [invitations.received]
+    [optimisticInvitations.received]
   )
 
   async function handleAcceptInvitation(id: string) {
-    console.log(id)
     manipulateInvitations({ id, type: 'ACCEPT' })
-    await acceptInvitation(id)
+    const res = await acceptInvitation(id)
+    if (!res.success) {
+      toast.error(res.error.error.issues[0].message || 'Failed to accept invitation')
+      return
+    }
     toast.success('Invitation accepted succesfully')
   }
 
   async function handleArhciveInvitation(id: string) {
     manipulateInvitations({ id, type: 'ARCHIVE' })
-    await archiveInvitation(id)
+    const res = await archiveInvitation(id)
+    if (!res.success) {
+      toast.error(res.error.error.issues[0].message || 'Failed to archive invitation')
+      return
+    }
     toast.success('Invitation archived succesfully')
   }
 
   async function handleDeleteInvitation(id: string) {
     manipulateInvitations({ id, type: 'DELETE' })
-    await deleteInvitation(id)
+    const res = await deleteInvitation(id)
+    if (!res.success) {
+      toast.error(res.error.error.issues[0].message || 'Failed to delete invitation')
+      return
+    }
     toast.success('Invitation deleted succesfully')
   }
 
@@ -78,7 +88,7 @@ export default function InvitationsViewTabBar({
 
       <TabsContent value="sent">
         <SentInvitationsTab
-          sentInvitations={invitations.sent}
+          sentInvitations={optimisticInvitations.sent}
           handleDeleteInvitation={handleDeleteInvitation}
         />
         {invitations.sent.length === 0 && (
@@ -92,14 +102,14 @@ export default function InvitationsViewTabBar({
           <ReceivedInvitationsTab
             handleAcceptInvitation={handleAcceptInvitation}
             handleArchiveInvitation={handleArhciveInvitation}
-            receivedInvitations={invitations.received.filter(
+            receivedInvitations={optimisticInvitations.received.filter(
               (inv) => !inv.archived
             )}
           />
           {invitations.received.length - archivedReceivedInvitations.length ===
             0 && (
-            <p className="text-gray-500">No active invitations found...</p>
-          )}
+              <p className="text-gray-500">No active invitations found...</p>
+            )}
         </div>
 
         <div>
