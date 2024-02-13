@@ -6,6 +6,7 @@ import { IBoard } from '@/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ListTab from '@/components/BoardView/ListTab'
 import TeamTab from '@/components/BoardView/TeamTab'
+import ActionTab from './ActionTab/ActionTab'
 
 interface TabsProps {
   session: Session
@@ -34,6 +35,10 @@ export default function TabBar({ session, board }: TabsProps) {
         <ListTab board={board} session={session} />
       </TabsContent>
 
+      <TabsContent value="history">
+        <ActionTab actions={board.Action!} />
+      </TabsContent>
+      
       <TabsContent value="team">
         <TeamTab authedUser={session.user} board={board} />
       </TabsContent>
