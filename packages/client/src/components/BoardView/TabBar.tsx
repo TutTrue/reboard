@@ -6,7 +6,7 @@ import { IBoard } from '@/types'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ListTab from '@/components/BoardView/ListTab'
 import TeamTab from '@/components/BoardView/TeamTab'
-import ActionTab from './ActionTab/ActionTab'
+import ActionTab from './HistoryTab/HistoryTab'
 
 interface TabsProps {
   session: Session
