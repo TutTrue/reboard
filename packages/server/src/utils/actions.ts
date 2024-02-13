@@ -33,7 +33,7 @@ export async function createAction<T extends ActionType>(
   boardId: string,
   payload: T extends keyof PayloadTypes ? PayloadTypes[T] : never
 ) {
-  const userInfo = `${decodedJwtPayload?.name} @${decodedJwtPayload?.username}`
+  const userInfo = `${decodedJwtPayload?.name}`
   const typedPayload = payload as DefualtPayloadType
 
   switch (type) {

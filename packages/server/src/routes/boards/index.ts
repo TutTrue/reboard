@@ -97,6 +97,14 @@ app.get('/:username/:boardName', async (c) => {
         },
       },
       Owner: true,
+      Action: {
+        include: {
+          User: true
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      }
     },
   })
 
