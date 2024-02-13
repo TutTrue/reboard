@@ -85,6 +85,14 @@ export interface IAction {
   User?: IUser
 }
 
+export const TaskViewMode = [
+  'SHOW_ALL',
+  'SHOW_COMPLETED',
+  'SHOW_UNCOMPLETED',
+] as const
+
+export type TaskViewMode = (typeof TaskViewMode)[number]
+
 export type APIError = {
   error: {
     issues: {

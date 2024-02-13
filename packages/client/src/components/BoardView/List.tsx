@@ -5,7 +5,7 @@ import { Session } from 'next-auth'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 
-import { IList, ITask } from '@/types'
+import { IList, ITask, TaskViewMode } from '@/types'
 import TaskCard from '@/components/BoardView/TaskCard/TaskCard'
 import { updateList } from '@/lib/serverActions/lists'
 import ListCardDropDownMenu from './ListComponents/ListCardDropDownMenu'
@@ -82,8 +82,12 @@ function taskReducer(oldState: ITask[], action: TaskReducerPayload): ITask[] {
 
 export default function List({ list, session }: ListProps) {
   const [editing, setEditing] = useState(false)
-
-  const [optimisticTasks, dispathTask] = useOptimistic(list.Task!, taskReducer)
+  const [taskViewMode, setTaskViewMode] = useState<TaskViewMode>('SHOW_ALL')
+  const [filteredTasks, setFilteredTasks] = useState<ITask[]>(list.Task!)
+  const [optimisticTasks, dispathTask] = useOptimistic(
+    list.Task!,
+    taskReducer
+  )
 
   async function handleListEdit(data: z.infer<typeof listFormSchema>) {
     const res = await updateList(list.id, data.name)
@@ -125,6 +129,14 @@ export default function List({ list, session }: ListProps) {
     }
   }
 
+  function handleTaskViewChange(mode: TaskViewMode) {
+    // TODO fix the optimistic UI bug
+    setTaskViewMode(mode)
+    // if (mode === 'SHOW_ALL') setFilteredTasks(list.Task!)
+    // else if (mode === 'SHOW_COMPLETED') setFilteredTasks(list.Task!.filter(task => task.completed))
+    // else if (mode === 'SHOW_UNCOMPLETED') setFilteredTasks(list.Task!.filter(task => !task.completed))
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <div className="bg-white shadow-md border p-5 rounded-md min-w-[300px]">
@@ -134,7 +146,12 @@ export default function List({ list, session }: ListProps) {
           ) : (
             <h2 className="text-xl font-semibold">{list.name}</h2>
           )}
-          <ListCardDropDownMenu listId={list.id} setEditing={setEditing} />
+          <ListCardDropDownMenu
+            listId={list.id}
+            setEditing={setEditing}
+            taskViewMode={taskViewMode}
+            setTaskViewMode={handleTaskViewChange}
+          />
         </header>
       </div>
 
