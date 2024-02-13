@@ -47,7 +47,7 @@ function taskReducer(oldState: ITask[], action: TaskReducerPayload): ITask[] {
         text: payload.text!,
         boardId: payload.boardId!,
         completed: false,
-        createdAt: new Date(),
+        createdAt: new Date().toString(),
         Creator: {
           id: payload.session!.user.id,
           fullName: payload.session!.user?.name || '',
@@ -63,7 +63,6 @@ function taskReducer(oldState: ITask[], action: TaskReducerPayload): ITask[] {
     }
 
     case TaskActionTypes.TOGGLE_TASK: {
-      console.log('Optimistic update is working')
       return oldState.map((task) =>
         task.id === payload.id ? { ...task, completed: !task.completed } : task
       )

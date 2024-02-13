@@ -21,7 +21,7 @@ export interface ITask {
   creatorId: string
   boardId: string
   listId: string
-  createdAt: Date
+  createdAt: string
 
   Creator?: IUser
   List?: IList
@@ -32,7 +32,7 @@ export interface IList {
   id: string
   name: string
   boardId: string
-  createdAt: Date
+  createdAt: string
 
   Board?: IBoard
   Task?: ITask[]
@@ -41,7 +41,7 @@ export interface IList {
 export interface IBoard {
   id: string
   name: string
-  createdAt: Date
+  createdAt: string
 
   Owner?: IUser
   UserBoards?: IUser[]
@@ -58,7 +58,7 @@ export interface IInvitation {
   toUserId: string
   accpeted: boolean
   archived: boolean
-  createdAt: Date
+  createdAt: string
 
   FromUser?: IUser
   ToUser?: IUser
@@ -80,7 +80,7 @@ export interface IAction {
   userId: string
   boardId: string
   message?: string
-  createdAt: Date
+  createdAt: string
 
   User?: IUser
 }
