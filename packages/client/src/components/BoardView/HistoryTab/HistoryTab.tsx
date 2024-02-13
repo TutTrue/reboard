@@ -30,10 +30,10 @@ export default function ActionTab({ actions }: ActionTabProps) {
         <Collapsible key={key} className="flex flex-col pl-5" defaultOpen>
           <CollapsibleTrigger asChild>
             <button
-              className={`text-gray-500 p-3 pl-5 -ml-5 text-left flex items-center gap-3 shadow-md border border-gray-300 bg-gray-50 hover:bg-white`}
+              className={`text-gray-500 p-3 text-sm pl-5 -ml-5 text-left flex items-center gap-5 shadow-md border border-gray-300 bg-gray-50 hover:bg-white`}
             >
-              <span>{key}</span>
               <HiOutlineChevronUpDown size={20} />
+              <span>Actions taken on {key}</span>
             </button>
           </CollapsibleTrigger>
 
