@@ -7,6 +7,7 @@ import { createErrors } from '../../utils'
 import { ERROR_CODES } from '../../constants'
 import { createAction } from '../../utils/actions'
 import { ActionType } from '@prisma/client'
+import { io } from '../../sockets'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -117,9 +118,15 @@ app.post(
           creatorId: decodedJwtPayload?.id!,
         },
       })
+      
       createAction(ActionType.CREATE_TASK, decodedJwtPayload, newList.boardId, {
         text: newList.text,
       })
+
+      // io.to(list.boardId).emit('new:task')
+      io.sockets.emit('new:task')
+
+
       return c.json(newList, 201)
     } catch (e) {
       return c.json(
