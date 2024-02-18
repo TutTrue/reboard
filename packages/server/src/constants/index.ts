@@ -1,6 +1,6 @@
 export const TOKEN_COOKIE_NAME = 'next-auth.session-token'
 export const AUTH_HEADER_NAME = 'authorization'
-export const PAGINATION_SIZE = 20
+export const PAGINATION_SIZE = 50
 export const ERROR_CODES = {
   DUBLICATE_ENTRY: 'dublicate_entry',
   NOT_FOUND: 'not_found',

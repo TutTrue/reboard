@@ -1,12 +1,13 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
+import { ActionType } from '@prisma/client'
 import { z } from 'zod'
 import { prisma } from '../../db/index'
 import { AuthVariables, authMiddleware } from '../../middleware'
 import { createErrors } from '../../utils'
 import { ERROR_CODES } from '../../constants'
 import { createAction } from '../../utils/actions'
-import { ActionType } from '@prisma/client'
+import { listNameSchema } from '../../utils/schemas'
 
 // TODO handle errors in a formal way
 
@@ -79,7 +80,7 @@ app.post(
   zValidator(
     'json',
     z.object({
-      name: z.string().min(2).max(255),
+      name: listNameSchema,
     })
   ),
   async (c) => {
@@ -134,7 +135,7 @@ app.patch(
   zValidator(
     'json',
     z.object({
-      name: z.string().min(2).max(255),
+      name: listNameSchema
     })
   ),
   async (c) => {

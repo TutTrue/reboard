@@ -1,12 +1,13 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { prisma } from '../../db/index'
+import { ActionType } from '@prisma/client'
+import { prisma } from '../../db'
 import { type AuthVariables, authMiddleware } from '../../middleware'
 import { ERROR_CODES } from '../../constants'
 import { createErrors } from '../../utils'
 import { createAction } from '../../utils/actions'
-import { ActionType } from '@prisma/client'
+import { boardNameSchema } from '../../utils/schemas'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -99,12 +100,12 @@ app.get('/:username/:boardName', async (c) => {
       Owner: true,
       Action: {
         include: {
-          User: true
+          User: true,
         },
         orderBy: {
-          createdAt: 'desc'
-        }
-      }
+          createdAt: 'desc',
+        },
+      },
     },
   })
 
@@ -128,13 +129,7 @@ app.post(
   zValidator(
     'json',
     z.object({
-      name: z
-        .string()
-        .min(2)
-        .max(255)
-        .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
-          message: "Invalid board name, name can't contain spaces",
-        }),
+      name: boardNameSchema,
     })
   ),
   async (c) => {
@@ -194,145 +189,12 @@ app.post(
   }
 )
 
-app.delete('/:boardId', async (c) => {
-  try {
-    const decodedJwtPayload = c.get('decodedJwtPayload')
-    const boardId = c.req.param('boardId')
-
-    const board = await prisma.board.findFirst({
-      where: {
-        id: boardId,
-        ownerId: decodedJwtPayload?.id,
-      },
-    })
-
-    if (!board)
-      return c.json(
-        createErrors([
-          {
-            code: ERROR_CODES.NOT_FOUND,
-            message:
-              'Board not found or user does not have access to the board',
-            path: 'boardId',
-          },
-        ]),
-        404
-      )
-
-    await prisma.board.delete({
-      where: {
-        id: boardId,
-      },
-    })
-
-    return c.json({}, 200)
-  } catch (e) {
-    return c.json(
-      createErrors([
-        {
-          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
-          message: 'Internal server error',
-          path: 'server',
-        },
-      ]),
-      500
-    )
-  }
-})
-
 app.patch(
   '/:boardId',
   zValidator(
     'json',
     z.object({
-      username: z.string().min(1).max(255), // user to be removed
-    })
-  ),
-  async (c) => {
-    try {
-      const decodedJwtPayload = c.get('decodedJwtPayload')
-      const boardId = c.req.param('boardId')
-      const { username } = c.req.valid('json')
-
-      const board = await prisma.board.findFirst({
-        include: {
-          UserBoards: {
-            select: {
-              username: true,
-            },
-          },
-        },
-        where: {
-          id: boardId,
-          ownerId: decodedJwtPayload?.id,
-        },
-      })
-
-      if (!board)
-        return c.json(
-          createErrors([
-            {
-              code: ERROR_CODES.NOT_FOUND,
-              message: 'Board not found',
-              path: 'boardId',
-            },
-          ]),
-          404
-        )
-      if (!board.UserBoards.some((user) => user.username === username))
-        return c.json(
-          createErrors([
-            {
-              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
-              message: 'User is not a member of the board',
-              path: 'username',
-            },
-          ]),
-          404
-        )
-
-      const updatedBoard = await prisma.board.update({
-        where: {
-          id: boardId,
-        },
-        data: {
-          UserBoards: {
-            disconnect: {
-              username,
-            },
-          },
-        },
-      })
-      return c.json(updatedBoard, 200)
-    } catch (e) {
-      return c.json(
-        createErrors([
-          {
-            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal server error',
-            path: 'server',
-          },
-        ]),
-        500
-      )
-    }
-  }
-)
-
-app.patch(
-  '/edit/:boardId',
-  zValidator(
-    'json',
-    z.object({
-      name: z
-        .string()
-        .min(2, {
-          message: 'name must be at least 2 characters.',
-        })
-        .max(255, { message: 'name must be at most 120 characters.' })
-        .regex(/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i, {
-          message: "Invalid board name, name can't contain spaces",
-        }),
+      name: boardNameSchema,
     })
   ),
   async (c) => {
@@ -387,3 +249,118 @@ app.patch(
     }
   }
 )
+
+app.patch('/leave/:username/:boardId', async (c) => {
+  try {
+    const decodedJwtPayload = c.get('decodedJwtPayload')
+    const { boardId, username } = c.req.param()
+
+    const board = await prisma.board.findFirst({
+      include: {
+        UserBoards: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      where: {
+        id: boardId,
+        ownerId: decodedJwtPayload?.id,
+      },
+    })
+
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'Board not found',
+            path: 'boardId',
+          },
+        ]),
+        404
+      )
+    if (!board.UserBoards.some((user) => user.username === username))
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_A_BOARD_MEMBER,
+            message: 'User is not a member of the board',
+            path: 'username',
+          },
+        ]),
+        404
+      )
+
+    const updatedBoard = await prisma.board.update({
+      where: {
+        id: boardId,
+      },
+      data: {
+        UserBoards: {
+          disconnect: {
+            username,
+          },
+        },
+      },
+    })
+    return c.json(updatedBoard, 200)
+  } catch (e) {
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
+  }
+})
+
+app.delete('/:boardId', async (c) => {
+  try {
+    const decodedJwtPayload = c.get('decodedJwtPayload')
+    const boardId = c.req.param('boardId')
+
+    const board = await prisma.board.findFirst({
+      where: {
+        id: boardId,
+        ownerId: decodedJwtPayload?.id,
+      },
+    })
+
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message:
+              'Board not found or user does not have access to the board',
+            path: 'boardId',
+          },
+        ]),
+        404
+      )
+
+    await prisma.board.delete({
+      where: {
+        id: boardId,
+      },
+    })
+
+    return c.json({}, 200)
+  } catch (e) {
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
+  }
+})
