@@ -31,7 +31,7 @@ export default async function Dashboard({
         <CreateBoardModal />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 pb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-5">
         {response.data?.map((board) => (
           <BoardCard key={board.id} board={board} session={session} />
         ))}
