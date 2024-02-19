@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ListTab from '@/components/BoardView/ListTab'
 import TeamTab from '@/components/BoardView/TeamTab'
 import HistoryTab from './HistoryTab/HistoryTab'
+import { useSocket } from '@/context/socketContext'
+import { useEffect } from 'react'
 
 interface TabsProps {
   session: Session
@@ -16,6 +18,12 @@ interface TabsProps {
 export default function TabBar({ session, board }: TabsProps) {
   const searchParams = useSearchParams()
   const defaultTab = searchParams.get('tab') || 'lists'
+  const socket = useSocket()
+
+  useEffect(() => {
+    if (!socket) return
+    socket.emit('join', board.id)
+  }, [socket])
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
@@ -38,7 +46,7 @@ export default function TabBar({ session, board }: TabsProps) {
       <TabsContent value="history">
         <HistoryTab actions={board.Action!} />
       </TabsContent>
-      
+
       <TabsContent value="team">
         <TeamTab authedUser={session.user} board={board} />
       </TabsContent>
