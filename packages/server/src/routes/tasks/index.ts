@@ -118,14 +118,12 @@ app.post(
           creatorId: decodedJwtPayload?.id!,
         },
       })
-      
+
       createAction(ActionType.CREATE_TASK, decodedJwtPayload, newList.boardId, {
         text: newList.text,
       })
 
-      // io.to(list.boardId).emit('new:task')
-      io.sockets.emit('new:task')
-
+      io.to(newList.boardId).emit('new:task')
 
       return c.json(newList, 201)
     } catch (e) {
@@ -300,7 +298,6 @@ app.patch(
             }
           )
         }
-
       }
       return c.json(updatedTask, 200)
     } catch (e) {

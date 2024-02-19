@@ -1,6 +1,6 @@
 'use client'
 
-import { useOptimistic, useState } from 'react'
+import { useOptimistic, useState, useEffect } from 'react'
 import { Session } from 'next-auth'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
@@ -13,6 +13,8 @@ import AddTaskForm from './ListComponents/AddTaskForm'
 import { listFormSchema } from '@/lib/formSchemas'
 import EditListForm from './ListComponents/EditListForn'
 import { createTask, deleteTask, updateTask } from '@/lib/serverActions/tasks'
+import { useSocket } from '@/context/socketContext'
+import { revalidateTasks } from '@/lib/revalidator'
 
 interface ListProps {
   list: IList
@@ -84,10 +86,13 @@ export default function List({ list, session }: ListProps) {
   const [editing, setEditing] = useState(false)
   const [taskViewMode, setTaskViewMode] = useState<TaskViewMode>('SHOW_ALL')
   const [filteredTasks, setFilteredTasks] = useState<ITask[]>(list.Task!)
-  const [optimisticTasks, dispathTask] = useOptimistic(
-    list.Task!,
-    taskReducer
-  )
+  const [optimisticTasks, dispathTask] = useOptimistic(list.Task!, taskReducer)
+  const socket = useSocket()
+
+  useEffect(() => {
+    if (!socket) return
+    socket.on('new:task', () => revalidateTasks())
+  }, [socket])
 
   async function handleListEdit(data: z.infer<typeof listFormSchema>) {
     const res = await updateList(list.id, data.name)
