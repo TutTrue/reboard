@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache'
 import { APIRespone, IBoard, IInvitation } from '@/types'
 import { fetcher, getToken } from '@/lib/fetcher'
-import { ApiError } from 'next/dist/server/api-utils'
 
 export async function kickUserFromBoard(
   boardId: string,
@@ -11,7 +10,7 @@ export async function kickUserFromBoard(
 ): Promise<APIRespone<IBoard>> {
   try {
     const res = await fetcher.patch(
-      `/boards/${boardId}`,
+      `/boards/kick/${username}/${boardId}`,
       { username },
       {
         headers: {
