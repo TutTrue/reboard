@@ -250,7 +250,8 @@ app.patch(
   }
 )
 
-app.patch('/leave/:username/:boardId', async (c) => {
+// TODO refactor the use of 'some()'
+app.patch('/kick/:username/:boardId', async (c) => {
   try {
     const decodedJwtPayload = c.get('decodedJwtPayload')
     const { boardId, username } = c.req.param()
@@ -304,6 +305,62 @@ app.patch('/leave/:username/:boardId', async (c) => {
         },
       },
     })
+    return c.json(updatedBoard, 200)
+  } catch (e) {
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
+  }
+})
+
+app.patch('/leave/:boardId', async (c) => {
+  try {
+    const decodedJwtPayload = c.get('decodedJwtPayload')
+    const { boardId } = c.req.param()
+
+    const board = await prisma.board.findFirst({
+      where: {
+        id: boardId,
+        UserBoards: {
+          some: {
+            id: decodedJwtPayload?.id,
+          },
+        },
+      },
+    })
+
+    if (!board)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: 'Board not found',
+            path: 'boardId',
+          },
+        ]),
+        404
+      )
+
+    const updatedBoard = await prisma.board.update({
+      where: {
+        id: boardId,
+      },
+      data: {
+        UserBoards: {
+          disconnect: {
+            id: decodedJwtPayload?.id,
+          },
+        },
+      },
+    })
+
     return c.json(updatedBoard, 200)
   } catch (e) {
     return c.json(
