@@ -12,8 +12,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { deleteBoard } from '@/lib/serverActions/boards'
+import { deleteBoard, leaveBoard } from '@/lib/serverActions/boards'
 import { HiOutlineLogout } from 'react-icons/hi'
+import toast from 'react-hot-toast'
 
 interface BoardOptionDropdownMenuProps {
   boardId: string
@@ -32,6 +33,13 @@ export default function BoardOptionDropdownMenu({
 
   async function handleEdit() {
     openEdit()
+  }
+
+  async function handleLeaveBoard() {
+    const res = await leaveBoard(boardId)
+
+    if (!res.success) toast.error('Error leaving the board')
+    else toast.success('Board left successfully')
   }
 
   return (
@@ -58,7 +66,10 @@ export default function BoardOptionDropdownMenu({
             </DropdownMenuItem>
           </>
         ) : (
-          <DropdownMenuItem className="flex items-center gap-2">
+          <DropdownMenuItem
+            onClick={handleLeaveBoard}
+            className="flex items-center gap-2"
+          >
             <HiOutlineLogout size={18} />
             <span>Leave board</span>
           </DropdownMenuItem>
