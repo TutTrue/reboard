@@ -8,6 +8,7 @@ import { ERROR_CODES } from '../../constants'
 import { createAction } from '../../utils/actions'
 import { ActionType } from '@prisma/client'
 import { io } from '../../sockets'
+import { emitNewTask } from '../../sockets/emits'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -123,7 +124,8 @@ app.post(
         text: newList.text,
       })
 
-      io.to(newList.boardId).emit('new:task')
+      // notify all board members
+      emitNewTask(newList.boardId)
 
       return c.json(newList, 201)
     } catch (e) {
