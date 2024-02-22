@@ -44,15 +44,17 @@ export default function BoardCard({ board, session }: BoardCardProps) {
           ) : (
             <Link
               href={`/${board?.Owner?.username}/${board.name}`}
-              className="font-semibold text-xl flex items-center gap-1 group-hover:text-indigo-500"
+              className="font-semibold text-xl flex items-center gap-1 group-hover:text-indigo-500 truncate"
             >
-              <HiOutlinePaperClip size={17} />
-              <span>
-                {board.Owner?.username != session?.user.username
-                  ? board.Owner?.username + '/'
-                  : ''}
-                {board.name}
-              </span>
+              <div className="flex justify-center items-center gap-1">
+                <HiOutlinePaperClip size={17} />
+                <span>
+                  {board.Owner?.username != session?.user.username
+                    ? board.Owner?.username + '/'
+                    : ''}
+                  {board.name}
+                </span>
+              </div>
             </Link>
           )}
 
