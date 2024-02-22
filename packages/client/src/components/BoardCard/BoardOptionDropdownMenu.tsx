@@ -28,7 +28,12 @@ export default function BoardOptionDropdownMenu({
   openEdit,
 }: BoardOptionDropdownMenuProps) {
   async function handleDeleteBoard() {
-    await deleteBoard(boardId)
+    const res = await deleteBoard(boardId)
+    if (!res.success)
+      toast.error(
+        res.error.error.issues[0].message || 'Error deleting the board'
+      )
+    else toast.success('Board deleted successfully')
   }
 
   async function handleEdit() {

@@ -100,15 +100,16 @@ export async function leaveBoard(id: string): Promise<APIRespone<IBoard>> {
 }
 
 // TODO refactor server action
-export async function deleteBoard(id: string): Promise<IBoard | null> {
-  const res = await fetcher.delete(`/boards/${id}`, {
-    headers: {
-      Authorization: await getToken(),
-    },
-  })
-
-  if (res.status === 500 || res.status === 404) return null
-  revalidatePath('/Dashboard')
-
-  return res.data
+export async function deleteBoard(id: string): Promise<APIRespone<IBoard>> {
+  try {
+    const res = await fetcher.delete(`/boards/${id}`, {
+      headers: {
+        Authorization: await getToken(),
+      },
+    })
+    revalidatePath('/Dashboard')
+    return { success: true, data: res.data }
+  } catch (e: any) {
+    return { success: false, error: e.response.data }
+  }
 }
