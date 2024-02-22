@@ -91,7 +91,7 @@ export default function List({ list, session }: ListProps) {
 
   useEffect(() => {
     if (!socket) return
-    socket.on('new:task', () => revalidateTasks())
+    socket.on('list-update', () => revalidateTasks())
   }, [socket])
 
   async function handleListEdit(data: z.infer<typeof listFormSchema>) {

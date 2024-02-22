@@ -1,5 +1,5 @@
 import { io } from '.'
 
-export function emitNewTask(boardId: string) {
-  io.to(boardId).emit('new:task')
+export function emitListUpdate(boardId: string) {
+  io.to(boardId).emit('list-update')
 }

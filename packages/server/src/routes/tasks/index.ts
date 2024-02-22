@@ -7,8 +7,7 @@ import { createErrors } from '../../utils'
 import { ERROR_CODES } from '../../constants'
 import { createAction } from '../../utils/actions'
 import { ActionType } from '@prisma/client'
-import { io } from '../../sockets'
-import { emitNewTask } from '../../sockets/emits'
+import { emitListUpdate } from '../../sockets/emits'
 
 export const app = new Hono<{ Variables: AuthVariables }>()
 
@@ -70,22 +69,25 @@ app.post(
       const decodedJwtPayload = c.get('decodedJwtPayload')
       const { listId } = c.req.param()
       const { text, label } = c.req.valid('json')
+
+      // find the list
       const list = await prisma.list.findUnique({
         include: {
+          Board: true,
+        },
+        where: {
+          id: listId,
           Board: {
-            include: {
-              UserBoards: {
-                select: {
-                  id: true,
-                },
+            UserBoards: {
+              some: {
+                id: decodedJwtPayload?.id,
               },
             },
           },
         },
-        where: {
-          id: listId,
-        },
       })
+
+      // if not found
       if (!list)
         return c.json(
           createErrors([
@@ -97,19 +99,7 @@ app.post(
           ]),
           404
         )
-      if (
-        !list.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
-      )
-        return c.json(
-          createErrors([
-            {
-              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
-              message: `User ${decodedJwtPayload?.username} is not a member of this board`,
-              path: 'boardId',
-            },
-          ]),
-          401
-        )
+
       const newList = await prisma.task.create({
         data: {
           text,
@@ -125,9 +115,96 @@ app.post(
       })
 
       // notify all board members
-      emitNewTask(newList.boardId)
+      emitListUpdate(newList.boardId)
 
       return c.json(newList, 201)
+    } catch (e) {
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+            message: 'Internal server error',
+            path: 'server',
+          },
+        ]),
+        500
+      )
+    }
+  }
+)
+
+app.patch(
+  '/:taskId',
+  zValidator(
+    'json',
+    z.object({
+      text: z.string().min(2).max(255).optional(),
+      label: z.string().min(2).max(255).optional(),
+      completed: z.boolean().optional(),
+    })
+  ),
+  async (c) => {
+    try {
+      const decodedJwtPayload = c.get('decodedJwtPayload')
+      const { taskId } = c.req.param()
+      const { text, label, completed } = c.req.valid('json')
+
+      // find the task
+      const task = await prisma.task.findUnique({
+        where: {
+          id: taskId,
+          Board: {
+            UserBoards: {
+              some: {
+                id: decodedJwtPayload?.id,
+              },
+            },
+          },
+        },
+      })
+
+      // if not found
+      if (!task)
+        return c.json(
+          createErrors([
+            {
+              code: ERROR_CODES.NOT_FOUND,
+              message: 'Task not found',
+              path: 'taskId',
+            },
+          ]),
+          404
+        )
+
+      const updatedTask = await prisma.task.update({
+        where: {
+          id: taskId,
+        },
+        data: {
+          completed: completed ?? task.completed,
+          text: text ?? task.text,
+          label: label ?? task.label,
+        },
+      })
+
+      if (text !== task.text)
+        createAction(ActionType.UPDATE_TASK, decodedJwtPayload, task.boardId, {
+          oldText: task.text,
+          text: updatedTask.text,
+        })
+
+      if (completed !== task.completed)
+        createAction(
+          completed ? ActionType.COMPLETE_TASK : ActionType.UNCHECK_TASK,
+          decodedJwtPayload,
+          task.boardId,
+          { text: updatedTask.text }
+        )
+
+      // notify all board members
+      emitListUpdate(task.boardId)
+
+      return c.json(updatedTask, 200)
     } catch (e) {
       return c.json(
         createErrors([
@@ -147,22 +224,22 @@ app.delete('/:taskId', async (c) => {
   try {
     const decodedJwtPayload = c.get('decodedJwtPayload')
     const { taskId } = c.req.param()
+
+    // find the task
     const task = await prisma.task.findUnique({
-      include: {
+      where: {
+        id: taskId,
         Board: {
-          include: {
-            UserBoards: {
-              select: {
-                id: true,
-              },
+          UserBoards: {
+            some: {
+              id: decodedJwtPayload?.id,
             },
           },
         },
       },
-      where: {
-        id: taskId,
-      },
     })
+
+    // if not found
     if (!task)
       return c.json(
         createErrors([
@@ -174,27 +251,20 @@ app.delete('/:taskId', async (c) => {
         ]),
         404
       )
-    if (
-      !task.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
-    )
-      return c.json(
-        createErrors([
-          {
-            code: ERROR_CODES.NOT_A_BOARD_MEMBER,
-            message: `User ${decodedJwtPayload?.username} is not a member of this board`,
-            path: 'boardId',
-          },
-        ]),
-        401
-      )
+
     await prisma.task.delete({
       where: {
         id: taskId,
       },
     })
+
     createAction(ActionType.DELETE_TASK, decodedJwtPayload, task.boardId, {
       text: task.text,
     })
+
+    // notify all board members
+    emitListUpdate(task.boardId)
+
     return c.json({}, 200)
   } catch (e) {
     return c.json(
@@ -209,110 +279,3 @@ app.delete('/:taskId', async (c) => {
     )
   }
 })
-
-app.patch(
-  '/:taskId',
-  zValidator(
-    'json',
-    z.object({
-      text: z.string().min(2).max(255).optional(),
-      label: z.string().min(2).max(255).optional(),
-      completed: z.boolean().optional(),
-    })
-  ),
-  async (c) => {
-    try {
-      const decodedJwtPayload = c.get('decodedJwtPayload')
-      const { taskId } = c.req.param()
-      const { text, label, completed } = c.req.valid('json')
-      const task = await prisma.task.findUnique({
-        include: {
-          Board: {
-            include: {
-              UserBoards: {
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        },
-        where: {
-          id: taskId,
-        },
-      })
-      if (!task)
-        return c.json(
-          createErrors([
-            {
-              code: ERROR_CODES.NOT_FOUND,
-              message: 'Task not found',
-              path: 'taskId',
-            },
-          ]),
-          404
-        )
-      if (
-        !task.Board.UserBoards.find((user) => user.id === decodedJwtPayload?.id)
-      )
-        return c.json(
-          createErrors([
-            {
-              code: ERROR_CODES.NOT_A_BOARD_MEMBER,
-              message: `User ${decodedJwtPayload?.username} is not a member of this board`,
-              path: 'boardId',
-            },
-          ]),
-          401
-        )
-      const updatedTask = await prisma.task.update({
-        where: {
-          id: taskId,
-        },
-        data: {
-          completed: completed ?? task.completed,
-          text: text ?? task.text,
-          label: label ?? task.label,
-        },
-      })
-      if (text)
-        createAction(ActionType.UPDATE_TASK, decodedJwtPayload, task.boardId, {
-          oldText: task.text,
-          text: updatedTask.text,
-        })
-      else {
-        if (completed) {
-          createAction(
-            ActionType.COMPLETE_TASK,
-            decodedJwtPayload,
-            task.boardId,
-            {
-              text: updatedTask.text,
-            }
-          )
-        } else {
-          createAction(
-            ActionType.UNCHECK_TASK,
-            decodedJwtPayload,
-            task.boardId,
-            {
-              text: updatedTask.text,
-            }
-          )
-        }
-      }
-      return c.json(updatedTask, 200)
-    } catch (e) {
-      return c.json(
-        createErrors([
-          {
-            code: ERROR_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal server error',
-            path: 'server',
-          },
-        ]),
-        500
-      )
-    }
-  }
-)
