@@ -17,7 +17,7 @@ interface BoardCardProps {
 
 function ListCard({ list }: { list: IList }) {
   return (
-    <div className="border p-2 rounded-md text-sm text-gray-500">
+    <div className="border p-2 rounded-md text-sm text-gray-500 truncate">
       {list.name}
     </div>
   )

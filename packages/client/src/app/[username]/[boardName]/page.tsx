@@ -25,7 +25,9 @@ export default async function BoardView({
   return (
     <Container>
       <div className="flex justify-between items-center gap-2">
-        <h2 className="font-bold text-3xl my-10">{response.data.name}</h2>
+        <h2 className="font-bold text-3xl my-10 truncate">
+          {response.data.name}
+        </h2>
 
         <div className="flex items-center gap-3">
           {session?.user.username === response.data.Owner?.username ? (
