@@ -51,7 +51,7 @@ model Invitation {
 
   FromUser User  @relation("InvitationFromUser", fields: [fromUserId], references: [id])
   ToUser   User  @relation("InvitationToUser", fields: [toUserId], references: [id])
-  Board    Board @relation(fields: [boardId], references: [id])
+  Board    Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
 }
 
 model List {
