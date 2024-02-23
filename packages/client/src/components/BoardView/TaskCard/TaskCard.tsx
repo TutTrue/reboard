@@ -1,21 +1,38 @@
+'use client'
 import Image from 'next/image'
 
 import { HiOutlineCheck } from 'react-icons/hi2'
 
 import { ITask } from '@/types'
 import TaskDropDownMenu from './TaskDropdownMenu'
+import { useState } from 'react'
+import EditTaskForm from './EditTaskForm'
+import { taskFormSchema } from '@/lib/formSchemas'
+import { z } from 'zod'
 
 interface TaskCardProps {
   task: ITask
   handleToggle: (id: string, completed: boolean) => void
   handleDelete: (id: string) => void
+  handleEdit: (id: string, text: string) => void
 }
 
 export default function TaskCard({
   task,
   handleToggle,
   handleDelete,
+  handleEdit,
 }: TaskCardProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  function handleIsEditing() {
+    setIsEditing(true)
+  }
+
+  async function handleTaskEdit(data: z.infer<typeof taskFormSchema>) {
+    handleEdit(task.id, data.text)
+    setIsEditing(false)
+  }
+
   return (
     <div className="bg-white px-3 py-2 hover:bg-gray-100 rounded-md flex items-center justify-between gap-3">
       <div className="flex items-center gap-2">
@@ -34,12 +51,20 @@ export default function TaskCard({
         >
           {task.completed ? <HiOutlineCheck size={18} /> : ''}
         </button>
-        <span className={task.completed ? 'line-through' : ''}>
-          {task.text}
-        </span>
+        {isEditing ? (
+          <EditTaskForm handleTaskEdit={handleTaskEdit} task={task} />
+        ) : (
+          <span className={task.completed ? 'line-through' : ''}>
+            {task.text}
+          </span>
+        )}
       </div>
 
-      <TaskDropDownMenu task={task} handleDelete={handleDelete} />
+      <TaskDropDownMenu
+        task={task}
+        handleDelete={handleDelete}
+        handleIsEditing={handleIsEditing}
+      />
     </div>
   )
 }

@@ -15,11 +15,13 @@ import { ITask } from '@/types'
 interface TaskDropDownMenuProps {
   task: ITask
   handleDelete: (id: string) => void
+  handleIsEditing: () => void
 }
 
 export default function TaskDropDownMenu({
   task,
   handleDelete,
+  handleIsEditing,
 }: TaskDropDownMenuProps) {
   return (
     <DropdownMenu>
@@ -27,7 +29,10 @@ export default function TaskDropDownMenu({
         <HiOutlineEllipsisHorizontal size={27} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="text-gray-500">
-        <DropdownMenuItem className="flex items-center gap-2">
+        <DropdownMenuItem
+          className="flex items-center gap-2"
+          onClick={handleIsEditing}
+        >
           <HiOutlinePencil size={18} />
           <span>Edit</span>
         </DropdownMenuItem>
