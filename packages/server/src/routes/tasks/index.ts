@@ -193,7 +193,7 @@ app.patch(
           text: updatedTask.text,
         })
 
-      if (completed !== task.completed)
+      if (updatedTask.completed !== task.completed)
         createAction(
           completed ? ActionType.COMPLETE_TASK : ActionType.UNCHECK_TASK,
           decodedJwtPayload,
