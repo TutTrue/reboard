@@ -33,7 +33,9 @@ export async function createAction<T extends ActionType>(
   boardId: string,
   payload: T extends keyof PayloadTypes ? PayloadTypes[T] : never
 ) {
-  const userInfo = `${decodedJwtPayload?.name}`
+  const userInfo = decodedJwtPayload?.name
+    ? `${decodedJwtPayload?.name}`
+    : `${decodedJwtPayload?.username}`
   const typedPayload = payload as DefualtPayloadType
 
   switch (type) {
@@ -153,8 +155,8 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} updated board name: "${typedPayload.oldName}" to "${typedPayload.name}"`,
-          boardId
-        }
+          boardId,
+        },
       })
       break
     }
@@ -164,8 +166,8 @@ export async function createAction<T extends ActionType>(
           userId: decodedJwtPayload?.id!,
           type,
           message: `${userInfo} unchecked a task: "${typedPayload.text}"`,
-          boardId
-        }
+          boardId,
+        },
       })
       break
     }
