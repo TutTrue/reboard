@@ -91,14 +91,17 @@ export default function List({ list, session }: ListProps) {
 
   useEffect(() => {
     if (!socket) return
-    socket.on('list-update', () => revalidateTasks())
+    socket.on('list-update', revalidateTasks)
+    return () => {
+      socket.off('list-update', revalidateTasks)
+    }
   }, [socket])
 
   async function handleListEdit(data: z.infer<typeof listFormSchema>) {
     const res = await updateList(list.id, data.name)
     setEditing(false)
     if (!res.success) {
-      toast.error('Failed to update list')
+      toast.error(res.error.error.issues[0].message || 'Failed to update list')
       return
     }
     toast.success('List updated successfully')
@@ -114,24 +117,37 @@ export default function List({ list, session }: ListProps) {
       toast.error(res.error.error.issues[0].message || 'Failed to add task')
       return
     }
+    toast.success('Task added successfully')
   }
 
   async function handleToggle(id: string, completed: boolean) {
     dispathTask({ type: TaskActionTypes.TOGGLE_TASK, payload: { id } })
-    const res = await updateTask(id, undefined, undefined, !completed)
+    const res = await updateTask(id, { completed: !completed })
     if (!res.success) {
-      toast.error('Error updating task')
+      toast.error(res.error.error.issues[0].message || 'Error updating task')
       return
     }
+    toast.success('Task updated successfully')
   }
 
   async function handleDelete(id: string) {
     dispathTask({ type: TaskActionTypes.DELETE_TASK, payload: { id } })
     const res = await deleteTask(id)
     if (!res.success) {
-      toast.error('Error deleting task')
+      toast.error(res.error.error.issues[0].message || 'Error deleting task')
       return
     }
+    toast.success('Task deleted successfully')
+  }
+
+  async function handleEdit(id: string, text: string) {
+    dispathTask({ type: TaskActionTypes.EDIT_TASK_TEXT, payload: { id, text } })
+    const res = await updateTask(id, { text })
+    if (!res.success) {
+      toast.error(res.error.error.issues[0].message || 'Error updating task')
+      return
+    }
+    toast.success('Task updated successfully')
   }
 
   function handleTaskViewChange(mode: TaskViewMode) {
@@ -165,6 +181,7 @@ export default function List({ list, session }: ListProps) {
           <TaskCard
             key={task.id}
             handleDelete={handleDelete}
+            handleEdit={handleEdit}
             handleToggle={handleToggle}
             task={task}
           />

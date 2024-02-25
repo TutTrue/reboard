@@ -25,23 +25,24 @@ export async function createTask(
     return { success: false, error: e.response.data }
   }
 }
-
+interface IUpdateTask {
+  taskId: string
+  payload: {
+    text?: string
+    label?: string
+    completed?: boolean
+  }
+}
 export async function updateTask(
   taskId: string,
-  text: string | undefined,
-  label: string | undefined,
-  completed: boolean | undefined
+  payload: IUpdateTask['payload']
 ): Promise<APIRespone<ITask>> {
   try {
-    const res = await fetcher.patch(
-      `/tasks/${taskId}`,
-      { text, label, completed },
-      {
-        headers: {
-          Authorization: await getToken(),
-        },
-      }
-    )
+    const res = await fetcher.patch(`/tasks/${taskId}`, payload, {
+      headers: {
+        Authorization: await getToken(),
+      },
+    })
 
     revalidatePath('/ListTab')
     return { success: true, data: res.data }
@@ -50,9 +51,7 @@ export async function updateTask(
   }
 }
 
-export async function deleteTask(
-  id: string
-): Promise<APIRespone<ITask>> {
+export async function deleteTask(id: string): Promise<APIRespone<ITask>> {
   try {
     const res = await fetcher.delete(`/tasks/${id}`, {
       headers: {

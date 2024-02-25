@@ -32,3 +32,12 @@ export const inviteUserFromSchema = z.object({
       message: "Invalid board name, name can't contain spaces",
     }),
 })
+
+export const taskFormSchema = z.object({
+  text: z
+    .string()
+    .min(2, {
+      message: 'name must be at least 2 characters.',
+    })
+    .max(255, { message: 'name must be at most 255 characters.' }),
+})
