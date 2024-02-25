@@ -8,7 +8,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null)
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3002')
+    const newSocket = io(process.env.SOCKET_SERVER)
     setSocket(newSocket)
 
     return () => {
