@@ -187,7 +187,7 @@ app.patch(
         },
       })
 
-      if (text !== task.text)
+      if (updatedTask.text !== task.text)
         createAction(ActionType.UPDATE_TASK, decodedJwtPayload, task.boardId, {
           oldText: task.text,
           text: updatedTask.text,
