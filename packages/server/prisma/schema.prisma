@@ -38,6 +38,8 @@ model Board {
   Task       Task[]
   Invitation Invitation[]
   Action     Action[]
+
+  @@unique([ownerId, name])
 }
 
 model Invitation {
