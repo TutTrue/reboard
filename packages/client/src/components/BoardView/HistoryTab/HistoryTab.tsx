@@ -7,13 +7,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { HiOutlineChevronDown, HiOutlineChevronUpDown } from 'react-icons/hi2'
+import { HiOutlineChevronUpDown } from 'react-icons/hi2'
 
-interface ActionTabProps {
+interface HistoryTabProps {
   actions: IAction[]
 }
 
-export default function ActionTab({ actions }: ActionTabProps) {
+export default function HistoryTab({ actions }: HistoryTabProps) {
   const actionsByDate = useMemo(() => {
     const mapByDays: { [key: string]: IAction[] } = {}
     actions.forEach((action) => {
