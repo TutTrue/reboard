@@ -61,7 +61,75 @@ app.get('/:boardId', async (c) => {
         pageSize: PAGINATION_SIZE,
       },
     })
+  } catch (e) {
+    return c.json(
+      createErrors([
+        {
+          code: ERROR_CODES.INTERNAL_SERVER_ERROR,
+          message: 'Internal server error',
+          path: 'server',
+        },
+      ]),
+      500
+    )
+  }
+})
 
+app.get('/:username/:boardName', async (c) => {
+  try {
+    const decodedJwtPayload = c.get('decodedJwtPayload')
+    const { username, boardName } = c.req.param()
+
+    const page = +(c.req.query('page') || 0)
+
+    // make sure user have access to the board
+    const userBoards = await prisma.board.findFirst({
+      where: {
+        name: boardName,
+        Owner: {
+          username,
+        },
+        UserBoards: {
+          some: {
+            id: decodedJwtPayload?.id,
+          },
+        },
+      },
+    })
+
+    if (!userBoards)
+      return c.json(
+        createErrors([
+          {
+            code: ERROR_CODES.NOT_FOUND,
+            message: "Couldn't find a board with the provided id",
+            path: 'server',
+          },
+        ]),
+        404
+      )
+
+    const actions = await prisma.action.findMany({
+      where: {
+        boardId: userBoards.id,
+      },
+      include: {
+        User: true,
+        Board: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    return c.json({
+      data: actions.slice(page * PAGINATION_SIZE, PAGINATION_SIZE),
+      metadata: {
+        page,
+        pages: Math.ceil(actions.length / PAGINATION_SIZE),
+        pageSize: PAGINATION_SIZE,
+      },
+    })
   } catch (e) {
     return c.json(
       createErrors([
