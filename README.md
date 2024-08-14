@@ -4,13 +4,13 @@ ReBoard is an intuitive and dynamic task management application designed to stre
 
 ## Project Screenshots
 
-![Project Screenshot](https://media.discordapp.net/attachments/1163446739936747572/1223224998387519539/image.png?ex=6619140e&is=66069f0e&hm=1ecc2a58e8e11dfb5d68c64d01e222bd6407409d784d697c33d467fd55ed3df9&=&format=webp&quality=lossless&width=964&height=458)
+![Project Screenshot](https://utfs.io/f/23df646d-29c0-4049-9237-77f08a7f1472-9lhajd.png)
 
-![Project Screenshot](https://media.discordapp.net/attachments/1163446739936747572/1223225471307874314/image.png?ex=6619147e&is=66069f7e&hm=2a531c77292b8c7694a5f5922e864c67c354d1eddba38b96fe9ea6783310bcd9&=&format=webp&quality=lossless&width=550&height=262)
+![Project Screenshot](https://utfs.io/f/db37cec3-aee4-4ebd-9eaa-ae8df61ae83f-o704sg.png)
 
-![Project Screenshot](https://media.discordapp.net/attachments/1163446739936747572/1223226519292477492/image.png?ex=66191578&is=6606a078&hm=3b7e7387766168fd24667316de48e0bd86945e252bb6c697f51ceb3475cbd316&=&format=webp&quality=lossless&width=964&height=458)
+![Project Screenshot](https://utfs.io/f/e9f89793-ade0-46d4-9974-cb3bbd659819-o71eu4.png)
 
-![Project Screenshot](https://media.discordapp.net/attachments/1163446739936747572/1223226855943966801/image.png?ex=661915c8&is=6606a0c8&hm=f0baac798e67cbac57c3fa44ea58015e12333b389a131ac1ab251306745611a9&=&format=webp&quality=lossless&width=964&height=458)
+![Project Screenshot](https://utfs.io/f/118dfcd5-af3a-4fbd-bfc4-1025f792cbf9-o73br7.png)
 
 ## 🧐 Features
 
