@@ -19,6 +19,8 @@ export default async function NavBar() {
   const session = await getServerSession(options)
   const response = await getInvitations()
 
+  if (!session) return null;
+
   return (
     <nav className="bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white h-[80px]">
       <Container className="flex items-center justify-between w-full h-full">
